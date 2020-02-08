@@ -9,24 +9,6 @@ use crate::*;
 
 use std::cmp;
 
-macro_rules! load {
-	($p:expr) => {
-		ResourceLoader::godot_singleton().load($p.into(), "".into(), false).unwrap().cast::<PackedScene>()
-	};
-}
-
-macro_rules! move_and_slide_default {
-	($o:expr, $v:expr) => {
-		$o.move_and_slide($v, Vector2::zero(), false, 4, 0.785398, true)
-	};
-}
-
-macro_rules! get_node {
-	($o:expr, $t:ty, $n:expr) => {
-		($o.get_node($n.into()).unwrap()).cast::<$t>()
-	};
-}
-
 
 #[derive(Clone)]
 pub enum Direction {
@@ -106,7 +88,7 @@ impl Player {
 		self.spr = get_node!(owner, AnimatedSprite, "Sprite");
 		self.sound_kick = get_node!(owner, AudioStreamPlayer, "SoundKick");
 
-		owner.set_position(Vector2::new(160., 120.));
+		owner.set_position(Vector2::new(160.0, 120.0));
 	}
 
 	#[export]
@@ -165,10 +147,10 @@ impl Player {
 	}
 
 	pub unsafe fn damage(&mut self, owner: KinematicBody2D, amount: u16) {
-		get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.);
+		get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
 		self.health -= amount;
 		self.iframes = true;
-		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1., 1., false);
+		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1.0, 1.0, false);
 		if self.health <= 0 {
 			// stuff
 		}
@@ -199,14 +181,14 @@ impl Player {
 	fn direction_management(&mut self) {
 		//let prev_face = self.face.clone();
 
-		if self.velocity.x == 0. {
+		if self.velocity.x == 0.0 {
 			match self.velocity.y as i8 {
 				-1 => self.face = Direction::Up,
 				1 => self.face = Direction::Down,
 				_ => {}
 			}
 		}
-		else if self.velocity.y == 0. {
+		else if self.velocity.y == 0.0 {
 			match self.velocity.x as i8 {
 				-1 => self.face = Direction::Left,
 				1 => self.face = Direction::Right,
@@ -233,13 +215,13 @@ impl Player {
 
 	unsafe fn throw_bullet(&mut self, owner: KinematicBody2D) {
 		let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
-		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_position(owner.get_position() + Vector2::new(0., 4.));
+		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_position(owner.get_position() + Vector2::new(0.0, 4.0));
 
 		let vec = (owner.get_global_mouse_position() - owner.get_position()).normalize();
 		let angle = vec.x.atan2(vec.y) as f64;
 		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_global_rotation(angle);
 
 		owner.get_tree().unwrap().get_root().unwrap().add_child(bullet, false);
-		self.sound_kick.unwrap().play(0.);
+		self.sound_kick.unwrap().play(0.0);
 	}
 }

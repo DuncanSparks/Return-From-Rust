@@ -6,7 +6,6 @@ use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot
 use gd::user_data::*;
 
 use player::Player;
-use macros;
 
 use crate::*;
 
@@ -25,7 +24,7 @@ pub struct PlayerBullet {
 
 #[methods]
 impl PlayerBullet {
-	const SPEED: f32 = 250.;
+	const SPEED: f32 = 250.0;
 
 	fn _init(_owner: gd::RigidBody2D) -> PlayerBullet {
 		PlayerBullet {
@@ -51,12 +50,10 @@ impl PlayerBullet {
 	#[export]
 	pub unsafe fn _ready(&self, mut owner: gd::RigidBody2D) {
 		if !self.stopped {
-			//owner.set_linear_velocity(Vector2::new(speed, 0))
-			//owner.set_bounce(0.8);
-			owner.set_linear_velocity(Vector2::new(PlayerBullet::SPEED, 0.));
+			owner.set_linear_velocity(Vector2::new(PlayerBullet::SPEED, 0.0));
 		}
 		else {
-			owner.set_angular_velocity(0.);
+			owner.set_angular_velocity(0.0);
 		}
 	}
 
@@ -71,9 +68,7 @@ impl PlayerBullet {
 	#[export]
 	pub unsafe fn _on_AreaPickUp_body_entered(&self, owner: gd::RigidBody2D, body: gd::Node) {
 		if body.is_in_group("Player".into()) && self.can_pick_up {
-			get_node!(owner, AudioStreamPlayer, "SoundPickUp").unwrap().play(0.);
-			//body.cast::<Player>().unwrap().set_bullet_available(true);
-			//let player_ref = Instance::<Player>::try_from_unsafe_base(body.cast::<KinematicBody2D>().unwrap()).unwrap();
+			get_node!(owner, AudioStreamPlayer, "SoundPickUp").unwrap().play(0.0);
 			let player_ref = get_instance_ref!(Player, body, KinematicBody2D).into_script();
 			player_ref.map_mut(|player| {
 				player.set_bullet_available(true);
