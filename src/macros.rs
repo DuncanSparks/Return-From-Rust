@@ -32,3 +32,17 @@ macro_rules! deallocate {
 		$r.as_ref().unwrap().free()
 	};
 }
+
+#[macro_export]
+macro_rules! get_singleton {
+	($o:expr, $t:ty, $n:ty) => {
+		Instance::<$n>::try_from_unsafe_base($o.get_node(NodePath::from(format!("{}{}", "/root/", stringify!($n))).new_ref()).unwrap().cast::<$t>().unwrap()).unwrap();
+	};
+}
+
+#[macro_export]
+macro_rules! rand_range {
+	($o:expr, $f:expr, $t:expr) => {
+		get_singleton!($o, Node, Controller).into_script().map_mut(|contr| { contr.rand_range($f, $t) }).unwrap()
+	};
+}

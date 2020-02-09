@@ -19,6 +19,10 @@ config/name="Return From Rust"
 run/main_scene="res://Scenes/Test.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+Controller="*res://Prefabs/Controller.tscn"
+
 [display]
 
 window/size/width=320

@@ -1,9 +1,7 @@
 // Player.rs
 
 use gdnative as gd;
-use gd::init::property;
 use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot_wrap_method_parameter_count};
-use gd::user_data::*;
 
 use crate::*;
 
@@ -129,7 +127,7 @@ impl Player {
 	}
 
 	#[export]
-	pub unsafe fn _exit_tree(&self, owner: gd::KinematicBody2D) {
+	pub unsafe fn _exit_tree(&self, _owner: gd::KinematicBody2D) {
 		deallocate!(self.bullet_ref);
 	}
 }
@@ -162,6 +160,10 @@ impl Player {
 
 	pub fn is_loading(&self) -> bool {
 		self.loading
+	}
+
+	pub fn set_loading(&mut self, value: bool) {
+		self.loading = value;
 	}
 
 	pub fn get_health(&self) -> u16 {
@@ -221,7 +223,7 @@ impl Player {
 		let angle = vec.x.atan2(vec.y) as f64;
 		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_global_rotation(angle);
 
-		owner.get_tree().unwrap().get_root().unwrap().add_child(bullet, false);
+		owner.get_tree().unwrap().get_current_scene().unwrap().add_child(bullet, false);
 		self.sound_kick.unwrap().play(0.0);
 	}
 }

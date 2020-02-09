@@ -58,7 +58,7 @@ impl PlayerBullet {
 	}
 
 	#[export]
-	pub unsafe fn _process(&mut self, mut owner: gd::RigidBody2D, delta: f64) {
+	pub unsafe fn _process(&mut self, mut owner: gd::RigidBody2D, _delta: f64) {
 		let y = owner.get_position().y as i64;
 		owner.set_z_index(y);
 
@@ -66,13 +66,38 @@ impl PlayerBullet {
 	}
 
 	#[export]
-	pub unsafe fn _on_AreaPickUp_body_entered(&self, owner: gd::RigidBody2D, body: gd::Node) {
+	pub unsafe fn _on_AreaPickUp_body_entered(&mut self, mut owner: gd::RigidBody2D, body: gd::Node) {
 		if body.is_in_group("Player".into()) && self.can_pick_up {
 			get_node!(owner, AudioStreamPlayer, "SoundPickUp").unwrap().play(0.0);
+
 			let player_ref = get_instance_ref!(Player, body, KinematicBody2D).into_script();
 			player_ref.map_mut(|player| {
 				player.set_bullet_available(true);
 			}).unwrap();
+			godot_print!("PICKED UP");
+
+			get_node!(owner, Sprite, "Sprite").unwrap().hide();
+			get_node!(owner, Particles2D, "PartsIdle").unwrap().set_emitting(false);
+			get_node!(owner, Particles2D, "PartsPickUp").unwrap().set_emitting(true);
+			get_node!(owner, Timer, "TimerDestroy").unwrap().start(0.0);
+			self.can_pick_up = false;
+			self.can_hit = false;
+			owner.emit_signal("picked_up".into(), &[]);
 		}
+	}
+
+	#[export]
+	pub unsafe fn _on_TimerPickUp_timeout(&mut self, _owner: gd::RigidBody2D) {
+		self.can_pick_up = true;
+	}
+
+	#[export]
+	pub unsafe fn _on_PlayerBullet_body_entered(&mut self, _owner: gd::RigidBody2D, body: gd::Node) {
+		//if self.can_hit && body.is_in_group("Enemy".into()) && !get_instance_ref!(Enemy, 
+	}
+
+	#[export]
+	pub unsafe fn _on_TimerStopHitting_timeout(&mut self, _owner: gd::RigidBody2D) {
+		self.can_hit = false;
 	}
 }
