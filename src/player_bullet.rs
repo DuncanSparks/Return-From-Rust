@@ -1,11 +1,12 @@
 // PlayerBullet.rs
 
 use gdnative as gd;
-use gd::init::property;
 use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot_wrap_method_parameter_count};
 use gd::user_data::*;
 
 use player::Player;
+use enemy::Enemy;
+use fountain::Fountain;
 
 use crate::*;
 
@@ -37,7 +38,7 @@ impl PlayerBullet {
 	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
 		builder.add_property::<bool>("can_pick_up")
 		.with_default(false)
-		.with_usage(property::Usage::DEFAULT)
+		.with_setter(|this: &mut Self, _owner: RigidBody2D,  v| this.can_pick_up = v)
 		.done();
 
 		builder.add_signal(init::Signal {
@@ -62,7 +63,10 @@ impl PlayerBullet {
 		let y = owner.get_position().y as i64;
 		owner.set_z_index(y);
 
-		//if owner.get_position().y < -10. || owner.get_position
+		if owner.get_position().x < -10.0 || owner.get_position().x > 330.0 || owner.get_position().y < -10.0 || owner.get_position().y > 190.0 {
+			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|player| { player.set_bullet_available(true); }).unwrap();
+			owner.queue_free();
+		}
 	}
 
 	#[export]
@@ -74,7 +78,6 @@ impl PlayerBullet {
 			player_ref.map_mut(|player| {
 				player.set_bullet_available(true);
 			}).unwrap();
-			godot_print!("PICKED UP");
 
 			get_node!(owner, Sprite, "Sprite").unwrap().hide();
 			get_node!(owner, Particles2D, "PartsIdle").unwrap().set_emitting(false);
@@ -93,7 +96,23 @@ impl PlayerBullet {
 
 	#[export]
 	pub unsafe fn _on_PlayerBullet_body_entered(&mut self, _owner: gd::RigidBody2D, body: gd::Node) {
-		//if self.can_hit && body.is_in_group("Enemy".into()) && !get_instance_ref!(Enemy, 
+		if self.can_hit {
+			if body.is_in_group("Enemy".into()) {
+				let enemy_ref = get_instance_ref!(Enemy, body, KinematicBody2D);
+				if !enemy_ref.into_script().map(|enemy| { enemy.is_healed() }).unwrap() {
+					let enemy_ref2 = get_instance_ref!(Enemy, body, KinematicBody2D);
+					enemy_ref2.map_mut(|enemy, owner| { enemy.hit(owner); }).unwrap();
+				}
+			}
+
+			if body.is_in_group("Fountain".into()) {
+				let fountain_ref = get_instance_ref!(Fountain, body, StaticBody2D);
+				if !fountain_ref.into_script().map(|fount| { fount.is_purified() }).unwrap() {
+					let fountain_ref2 = get_instance_ref!(Fountain, body, StaticBody2D);
+					fountain_ref2.map_mut(|fount, owner| { fount.purify(owner, false); }).unwrap()
+				}
+			}
+		}
 	}
 
 	#[export]

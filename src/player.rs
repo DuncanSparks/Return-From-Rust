@@ -39,7 +39,6 @@ pub struct Player {
 
 	spr: Option<AnimatedSprite>,
 	sound_kick: Option<AudioStreamPlayer>,
-	//healthbar: Option<TextureProgress>
 }
 
 
@@ -66,22 +65,15 @@ impl Player {
 
 			spr: None,
 			sound_kick: None,
-			//healthbar: None
 		}
 	}
 
 	fn register_properties(_builder: &gd::init::ClassBuilder<Self>) {
-		/*builder.add_property::<gd::GodotString>("buffer")
-		.with_default(gd::GodotString::new())
-		.with_usage(property::Usage::NOEDITOR)
-		//.with_setter(|this: &mut Self, owner: gd::Node, v: gd::GodotString| this.buffer = v.to_string())
-		//.with_getter(|this: &Self, owner: gd::Node| gd::GodotString::from_str(this.buffer.as_str()))
-		.done();*/
 	}
 
 	#[export]
 	pub unsafe fn _ready(&mut self, mut owner: gd::KinematicBody2D) {
-		self.bullet_ref = load!("res://Prefabs/PlayerBullet.tscn");
+		self.bullet_ref = load!("res://Prefabs/Objects/PlayerBullet.tscn");
 
 		self.spr = get_node!(owner, AnimatedSprite, "Sprite");
 		self.sound_kick = get_node!(owner, AudioStreamPlayer, "SoundKick");
@@ -130,6 +122,23 @@ impl Player {
 	pub unsafe fn _exit_tree(&self, _owner: gd::KinematicBody2D) {
 		deallocate!(self.bullet_ref);
 	}
+
+	pub unsafe fn damage(&mut self, owner: KinematicBody2D, amount: u16) {
+		get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
+		self.health -= amount;
+		self.iframes = true;
+		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1.0, 1.0, false);
+		if self.health <= 0 {
+			// stuff
+		}
+	}
+
+	#[export]
+	pub unsafe fn _on_AnimationPlayer_animation_finished(&mut self, _owner: KinematicBody2D, anim_name: GodotString) {
+		if anim_name == "IFrames".into() {
+			self.iframes = false;
+		}
+	}
 }
 
 impl Player {
@@ -142,16 +151,6 @@ impl Player {
 
 	pub fn set_bullet_available(&mut self, value: bool) {
 		self.bullet_available = value;
-	}
-
-	pub unsafe fn damage(&mut self, owner: KinematicBody2D, amount: u16) {
-		get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
-		self.health -= amount;
-		self.iframes = true;
-		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1.0, 1.0, false);
-		if self.health <= 0 {
-			// stuff
-		}
 	}
 
 	pub fn heal(&mut self, amount: u16) {

@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/GroundAttack.ogg-ab2c4a9787b02737a6992557f0366788.oggstr"
+
+[deps]
+
+source_file="res://Audio/GroundAttack.ogg"
+dest_files=[ "res://.import/GroundAttack.ogg-ab2c4a9787b02737a6992557f0366788.oggstr" ]
+
+[params]
+
+loop=false
+loop_offset=0

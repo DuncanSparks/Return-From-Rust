@@ -30,6 +30,7 @@ pub struct Controller {
 	text_healed: Option<Label>,
 	healthbar: Option<TextureProgress>,
 	timer_text: Option<Label>,
+	cursor: Option<Sprite>,
 
 	rand: RandomNumberGenerator
 }
@@ -52,6 +53,7 @@ impl Controller {
 			text_healed: None,
 			healthbar: None,
 			timer_text: None,
+			cursor: None,
 
 			rand: RandomNumberGenerator::new()
 		}
@@ -73,15 +75,16 @@ impl Controller {
 		self.text_healed = get_node!(owner, Label, "CanvasLayer/Label");
 		self.timer_text = get_node!(owner, Label, "CanvasLayer2/TimerText");
 		self.healthbar = get_node!(owner, TextureProgress, "CanvasLayer/Health");
-
-		godot_print!("HELLO THERE");
+		self.cursor = get_node!(owner, Sprite, "CanvasLayer3/Cursor");
 	}
 
 	#[export]
-	pub unsafe fn _process(&mut self, _owner: Node, delta: f64) {
+	pub unsafe fn _process(&mut self, owner: Node, delta: f64) {
 		if self.speedrun_timer {
 			self.timer += delta;
 		}
+
+		self.cursor.unwrap().set_position(owner.get_viewport().unwrap().get_mouse_position());
 
 		self.timer_text.unwrap().set_text(GodotString::from(self.timer.to_string()));
 
@@ -170,6 +173,10 @@ impl Controller {
 		self.enemies_healed.insert(enemy_id, enemy_pos);
 	}
 
+	pub fn add_fountain_purified_info(&mut self, fountain_id: GodotString) {
+		self.fountains_purified.insert(fountain_id, true);
+	}
+
 	pub fn stop_timer(&mut self) {
 		self.speedrun_timer = false;
 	}
@@ -184,5 +191,9 @@ impl Controller {
 
 	pub fn get_healed_enemy_position(&self, enemy_id: GodotString) -> Vector2 {
 		self.enemies_healed[&enemy_id]
+	}
+
+	pub fn fountain_is_purified(&self, fountain_id: GodotString) -> bool {
+		self.enemies_healed.contains_key(&fountain_id)
 	}
 }

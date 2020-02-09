@@ -99,40 +99,52 @@ impl Enemy {
 
 		builder.add_property::<f32>("speed")
 		.with_default(25.0)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.speed = v)
 		.done();
 
 		builder.add_property::<u16>("health")
 		.with_default(2)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.health = v)
 		.done();
 
 		builder.add_property::<bool>("follow")
 		.with_default(true)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.follow = v)
 		.done();
 
 		builder.add_property::<bool>("shoot")
 		.with_default(true)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.shoot = v)
 		.done();
 
 		builder.add_property::<bool>("fast_fire")
 		.with_default(false)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.fast_fire = v)
 		.done();
 
 		builder.add_property::<bool>("ground_attack")
 		.with_default(false)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ground_attack = v)
 		.done();
 
 		builder.add_property::<GodotString>("healed_text")
 		.with_default(GodotString::new())
 		.with_hint(property::StringHint::Multiline)
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.healed_text = v)
 		.done();
 
 		builder.add_property::<NodePath>("navigator")
 		.with_default(NodePath::new(&GodotString::new()))
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.navigator = v)
 		.done();
 	}
 
 	#[export]
 	pub unsafe fn _ready(&mut self, mut owner: gd::KinematicBody2D) {
+		self.bullet_ref = load!("res://Prefabs/Objects/Bullet.tscn");
+		self.ground_attack_ref = load!("res://Prefabs/Objects/GroundAttack.tscn");
+		self.parts_healed = load!("res://Prefabs/Particles/PartsHealed.tscn");
+
 		self.timer = get_node!(owner, Timer, "Timer");
 		self.spr = get_node!(owner, AnimatedSprite, "Sprite");
 		self.text = get_node!(owner, RichTextLabel, "Text");
@@ -143,8 +155,13 @@ impl Enemy {
 			self.disappear = true;
 		}
 
-		self.nav_node = get_node!(owner, Navigation2D, self.navigator.new_ref());
-
+		if self.follow {
+			match owner.get_node(self.navigator.new_ref().into()) {
+				Some(n) => self.nav_node = n.cast::<Navigation2D>(),
+				None => self.nav_node = None
+			};
+		}
+		
 		self.timer.unwrap().set_wait_time(rand_range!(owner, 2.0, 4.0));
 		self.set_text(owner, self.healed_text.new_ref());
 
@@ -164,7 +181,7 @@ impl Enemy {
 			owner.set_position(result);
 		}
 
-		if self.follow {
+		if self.follow && !self.nav_node.is_none() {
 			self.nav_path = self.nav_node.unwrap().get_simple_path(owner.get_global_position(), owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_global_position(), false);
 			get_node!(owner, Timer, "TimerNav").unwrap().start(0.0);
 		}
@@ -187,7 +204,7 @@ impl Enemy {
 			self.text.unwrap().set_visible_characters(c + 1);
 		}
 
-		if self.follow && !self.healed {
+		if self.follow && !self.healed && !self.nav_node.is_none() {
 			self.move_along_path(self.speed * delta as f32, owner);
 			self.walking = self.velocity != Vector2::zero();
 		}
@@ -279,9 +296,9 @@ impl Enemy {
 		if !self.healed {
 			get_node!(owner, AudioStreamPlayer, "SoundShoot").unwrap().play(0.0);
 			let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
-			let mut bullet_ref = bullet.unwrap().cast::<RigidBody2D>().unwrap();
-			bullet_ref.set_position(owner.get_position());
-			bullet_ref.set_global_rotation(owner.get_position().angle_to(owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_position()).get() as f64);
+			let mut bullet_r = bullet.unwrap().cast::<RigidBody2D>().unwrap();
+			bullet_r.set_position(owner.get_position());
+			bullet_r.set_global_rotation(owner.get_position().angle_to(owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_position()).get() as f64);
 			owner.get_tree().unwrap().get_current_scene().unwrap().add_child(bullet, false);
 			self.timer_shoot.unwrap().set_wait_time(if self.fast_fire { rand_range!(owner, 0.8, 1.5) } else { rand_range!(owner, 1.5, 3.0) });
 		}
