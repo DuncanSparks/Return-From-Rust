@@ -153,6 +153,10 @@ impl Controller {
 	// =====================================================================
 
 impl Controller {
+	pub fn is_speedrun_timer_on(&self) -> bool {
+		self.speedrun_timer
+	}
+
 	pub fn set_speedrun_timer(&mut self, value: bool) {
 		self.speedrun_timer = value;
 	}

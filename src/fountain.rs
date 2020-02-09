@@ -39,7 +39,7 @@ impl Fountain {
 		}
 	}
 
-	pub unsafe fn purify(&mut self, mut owner: StaticBody2D, room_start: bool) {
+	pub unsafe fn purify(&mut self, owner: StaticBody2D, room_start: bool) {
 		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("Purified".into(), -1.0, 1.0, false);
 		if !room_start {
 			get_node!(owner, AudioStreamPlayer, "SoundPurify").unwrap().play(0.0);

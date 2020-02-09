@@ -16,6 +16,18 @@ pub enum Direction {
 	Right
 }
 
+impl Direction {
+	pub fn from_u8(value: u8) -> Direction {
+		match value {
+			0 => Direction::Up,
+			1 => Direction::Down,
+			2 => Direction::Left,
+			3 => Direction::Right,
+			_ => Direction::Up
+		}
+	}
+}
+
 
 #[derive(gd::NativeClass)]
 #[inherit(gd::KinematicBody2D)]
@@ -145,6 +157,10 @@ impl Player {
 
 	// =====================================================================
 
+	pub fn get_face(&self) -> Direction {
+		self.face.clone()
+	}
+
 	pub fn set_face(&mut self, value: Direction) {
 		self.face = value;
 	}
@@ -180,8 +196,6 @@ impl Player {
 	// =====================================================================
 
 	fn direction_management(&mut self) {
-		//let prev_face = self.face.clone();
-
 		if self.velocity.x == 0.0 {
 			match self.velocity.y as i8 {
 				-1 => self.face = Direction::Up,

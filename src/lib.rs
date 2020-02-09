@@ -9,6 +9,9 @@ mod enemy;
 mod bullet;
 mod ground_attack;
 mod fountain;
+mod loading_zone;
+mod start;
+mod title;
 
 fn init(handle: InitHandle) {
 	handle.add_class::<player::Player>();
@@ -18,6 +21,9 @@ fn init(handle: InitHandle) {
 	handle.add_class::<bullet::Bullet>();
 	handle.add_class::<ground_attack::GroundAttack>();
 	handle.add_class::<fountain::Fountain>();
+	handle.add_class::<loading_zone::LoadingZone>();
+	handle.add_class::<start::Start>();
+	handle.add_class::<title::Title>();
 }
 
 godot_gdnative_init!();
