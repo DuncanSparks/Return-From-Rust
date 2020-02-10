@@ -36,9 +36,9 @@ impl PlayerBullet {
 	}
 
 	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
-		builder.add_property::<bool>("can_pick_up")
+		builder.add_property::<bool>("stopped")
 		.with_default(false)
-		.with_setter(|this: &mut Self, _owner: RigidBody2D,  v| this.can_pick_up = v)
+		.with_setter(|this: &mut Self, _owner: RigidBody2D,  v| this.stopped = v)
 		.done();
 
 		builder.add_signal(init::Signal {

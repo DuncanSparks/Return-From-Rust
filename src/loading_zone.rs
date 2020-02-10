@@ -47,7 +47,7 @@ impl LoadingZone {
 	pub unsafe fn _on_LoadingZone_body_entered(&mut self, owner: Area2D, body: Node) {
 		if body.is_in_group("Player".into()) {
 			let player_ref = get_instance_ref!(Player, body, KinematicBody2D);
-			if player_ref.into_script().map(|player| { player.is_loading() }).unwrap() {
+			if player_ref.into_script().map(|player| { !player.is_loading() }).unwrap() {
 				let player_ref_2 = get_instance_ref!(Player, body, KinematicBody2D).into_script();
 				player_ref_2.map_mut(|player| { player.set_loading(true); }).unwrap();
 				player_ref_2.map_mut(|player| { player.set_face(Direction::from_u8(self.direction)); }).unwrap();

@@ -8,7 +8,7 @@
 [ext_resource path="res://Sprites/UI/Healthbar_back.png" type="Texture" id=6]
 [ext_resource path="res://Sprites/UI/Crosshair4C.png" type="Texture" id=7]
 
-[sub_resource type="Animation" id=4]
+[sub_resource type="Animation" id=1]
 resource_name = "Idle"
 length = 0.8
 loop = true
@@ -25,7 +25,7 @@ tracks/0/keys = {
 "values": [ 0, 1, 2, 3 ]
 }
 
-[sub_resource type="RectangleShape2D" id=5]
+[sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 10, 104 )
 
 [sub_resource type="RectangleShape2D" id=3]
@@ -126,9 +126,9 @@ hframes = 4
 [node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer3"]
 autoplay = "Idle"
 playback_speed = 1.5
-anims/Idle = SubResource( 4 )
+anims/Idle = SubResource( 1 )
 
-[node name="TimerWait" type="Timer" parent="."]
+[node name="TimerAfterLoad" type="Timer" parent="."]
 
 [node name="MusicDistorted" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )
@@ -140,11 +140,11 @@ collision_mask = 32
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( -10, 88 )
-shape = SubResource( 5 )
+shape = SubResource( 2 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( 330, 88 )
-shape = SubResource( 5 )
+shape = SubResource( 2 )
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( 160, 200 )
@@ -157,4 +157,5 @@ shape = SubResource( 3 )
 [node name="TimerQuit" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
+[connection signal="timeout" from="TimerAfterLoad" to="." method="after_load_2"]
 [connection signal="timeout" from="TimerQuit" to="." method="_on_TimerQuit_timeout"]

@@ -139,10 +139,13 @@ impl Controller {
 	}
 
 	pub unsafe fn after_load(&mut self, owner: Node) {
-		let timer = get_node!(owner, Timer, "TimerWait");
+		let timer = get_node!(owner, Timer, "TimerAfterLoad");
 		timer.unwrap().set_wait_time(0.2);
 		timer.unwrap().start(0.0);
+	}
 
+	#[export]
+	pub unsafe fn after_load_2(&mut self, owner: Node) {
 		let player_ref = get_singleton!(owner, KinematicBody2D, Player).into_script();
 		player_ref.map_mut(|player| {
 			player.set_loading(false);

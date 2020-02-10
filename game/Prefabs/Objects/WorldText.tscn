@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Scripts/WorldText.gdns" type="Script" id=1]
+[ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=2]
+
+[node name="WorldText" type="RichTextLabel"]
+margin_left = 64.0
+margin_top = 56.0
+margin_right = 256.0
+margin_bottom = 96.0
+rect_clip_content = false
+custom_fonts/normal_font = ExtResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center][wave amp=20 freq=3.5]World Text"
+text = "World Text"
+scroll_active = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}

@@ -1,0 +1,108 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://Resources/TileMap.tres" type="TileSet" id=1]
+[ext_resource path="res://Scripts/Room.gdns" type="Script" id=2]
+[ext_resource path="res://Prefabs/LoadingZone.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Prefabs/Enemy.tscn" type="PackedScene" id=4]
+
+
+[sub_resource type="NavigationPolygon" id=1]
+vertices = PoolVector2Array( 24, 24, 296, 24, 296, 72, 152, 72, 152, 104, 296, 104, 296, 168, 104, 168, 104, 72, 72, 72, 24, 168, 72, 168 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 5, 6, 7 ), PoolIntArray( 4, 7, 8, 3 ), PoolIntArray( 0, 3, 8 ), PoolIntArray( 0, 8, 9 ), PoolIntArray( 10, 0, 9, 11 ) ]
+outlines = [ PoolVector2Array( 24, 24, 24, 168, 72, 168, 72, 72, 104, 72, 104, 168, 296, 168, 296, 104, 152, 104, 152, 72, 296, 72, 296, 24 ) ]
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 8, 24 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 32, 8 )
+
+[node name="Scene" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="TileMap" type="TileMap" parent="."]
+z_index = -50
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+collision_layer = 11
+collision_mask = 11
+format = 1
+tile_data = PoolIntArray( 0, 3, 0, 1, 3, 0, 2, 3, 0, 3, 3, 0, 4, 3, 0, 5, 3, 0, 6, 3, 0, 7, 3, 0, 8, 0, 0, 9, 0, 0, 10, 0, 0, 11, 0, 0, 12, 3, 0, 13, 3, 0, 14, 3, 0, 15, 3, 0, 16, 3, 0, 17, 3, 0, 18, 3, 0, 19, 3, 0, 65536, 3, 0, 65537, 0, 0, 65538, 0, 0, 65539, 0, 0, 65540, 0, 0, 65541, 2, 0, 65542, 0, 0, 65543, 0, 0, 65544, 0, 0, 65545, 0, 0, 65546, 0, 0, 65547, 0, 0, 65548, 0, 0, 65549, 0, 0, 65550, 0, 0, 65551, 0, 0, 65552, 0, 0, 65553, 0, 0, 65554, 0, 0, 65555, 3, 0, 131072, 3, 0, 131073, 0, 0, 131074, 0, 0, 131075, 2, 0, 131076, 2, 0, 131077, 2, 0, 131078, 0, 0, 131079, 0, 0, 131080, 0, 0, 131081, 0, 0, 131082, 0, 0, 131083, 0, 0, 131084, 0, 0, 131085, 0, 0, 131086, 0, 0, 131087, 0, 0, 131088, 0, 0, 131089, 0, 0, 131090, 0, 0, 131091, 0, 0, 196608, 3, 0, 196609, 0, 0, 196610, 0, 0, 196611, 2, 0, 196612, 0, 0, 196613, 0, 0, 196614, 0, 0, 196615, 0, 0, 196616, 0, 0, 196617, 0, 0, 196618, 0, 0, 196619, 0, 0, 196620, 0, 0, 196621, 0, 0, 196622, 2, 0, 196623, 2, 0, 196624, 2, 0, 196625, 2, 0, 196626, 0, 0, 196627, 0, 0, 262144, 3, 0, 262145, 0, 0, 262146, 0, 0, 262147, 0, 0, 262148, 0, 0, 262149, 0, 0, 262150, 0, 0, 262151, 0, 0, 262152, 0, 0, 262153, 0, 0, 262154, 0, 0, 262155, 0, 0, 262156, 0, 0, 262157, 0, 0, 262158, 0, 0, 262159, 0, 0, 262160, 0, 0, 262161, 0, 0, 262162, 0, 0, 262163, 0, 0, 327680, 3, 0, 327681, 0, 0, 327682, 0, 0, 327683, 0, 0, 327684, 0, 0, 327685, 3, 0, 327686, 0, 0, 327687, 0, 0, 327688, 0, 0, 327689, 0, 0, 327690, 0, 0, 327691, 0, 0, 327692, 0, 0, 327693, 0, 0, 327694, 0, 0, 327695, 0, 0, 327696, 0, 0, 327697, 0, 0, 327698, 0, 0, 327699, 3, 0, 393216, 3, 0, 393217, 0, 0, 393218, 0, 0, 393219, 0, 0, 393220, 0, 0, 393221, 3, 0, 393222, 0, 0, 393223, 0, 0, 393224, 0, 0, 393225, 0, 0, 393226, 0, 0, 393227, 0, 0, 393228, 0, 0, 393229, 0, 0, 393230, 2, 0, 393231, 2, 0, 393232, 1, 0, 393233, 2, 0, 393234, 2, 0, 393235, 3, 0, 458752, 3, 0, 458753, 1, 0, 458754, 0, 0, 458755, 0, 0, 458756, 0, 0, 458757, 3, 0, 458758, 0, 0, 458759, 0, 0, 458760, 1, 0, 458761, 1, 0, 458762, 1, 0, 458763, 0, 0, 458764, 0, 0, 458765, 0, 0, 458766, 2, 0, 458767, 1, 0, 458768, 2, 0, 458769, 1, 0, 458770, 2, 0, 458771, 3, 0, 524288, 3, 0, 524289, 0, 0, 524290, 0, 0, 524291, 0, 0, 524292, 0, 0, 524293, 3, 0, 524294, 0, 0, 524295, 1, 0, 524296, 1, 0, 524297, 0, 0, 524298, 1, 0, 524299, 0, 0, 524300, 0, 0, 524301, 0, 0, 524302, 1, 0, 524303, 2, 0, 524304, 2, 0, 524305, 2, 0, 524306, 1, 0, 524307, 3, 0, 589824, 3, 0, 589825, 0, 0, 589826, 0, 0, 589827, 0, 0, 589828, 0, 0, 589829, 3, 0, 589830, 0, 0, 589831, 0, 0, 589832, 0, 0, 589833, 0, 0, 589834, 0, 0, 589835, 0, 0, 589836, 0, 0, 589837, 0, 0, 589838, 2, 0, 589839, 1, 0, 589840, 2, 0, 589841, 1, 0, 589842, 2, 0, 589843, 3, 0, 655360, 3, 0, 655361, 0, 0, 655362, 0, 0, 655363, 0, 0, 655364, 0, 0, 655365, 3, 0, 655366, 0, 0, 655367, 0, 0, 655368, 0, 0, 655369, 0, 0, 655370, 0, 0, 655371, 0, 0, 655372, 0, 0, 655373, 0, 0, 655374, 2, 0, 655375, 2, 0, 655376, 1, 0, 655377, 2, 0, 655378, 2, 0, 655379, 3, 0, 720896, 3, 0, 720897, 3, 0, 720898, 3, 0, 720899, 3, 0, 720900, 3, 0, 720901, 3, 0, 720902, 3, 0, 720903, 3, 0, 720904, 3, 0, 720905, 3, 0, 720906, 3, 0, 720907, 3, 0, 720908, 3, 0, 720909, 3, 0, 720910, 3, 0, 720911, 3, 0, 720912, 3, 0, 720913, 3, 0, 720914, 3, 0, 720915, 3, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Barrier" type="TileMap" parent="."]
+z_index = -50
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+collision_layer = 11
+collision_mask = 11
+format = 1
+tile_data = PoolIntArray( 8, 4, 0, 9, 4, 0, 10, 4, 0, 11, 4, 0, 131091, 4, 0, 196627, 4, 0, 262163, 4, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Grate" type="TileMap" parent="."]
+z_index = -50
+tile_set = ExtResource( 1 )
+cell_size = Vector2( 16, 16 )
+collision_layer = 3
+collision_mask = 3
+format = 1
+tile_data = PoolIntArray( 327690, 5, 0, 327691, 5, 0, 327692, 5, 0, 327693, 5, 0, 327694, 5, 0, 327695, 5, 0, 327696, 5, 0, 327697, 5, 0, 327698, 5, 0 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Navigation2D" type="Navigation2D" parent="."]
+
+[node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="Navigation2D"]
+navpoly = SubResource( 1 )
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Enemy" parent="." instance=ExtResource( 4 )]
+position = Vector2( 232, 112 )
+speed = 55.0
+navigator = NodePath("../Navigation2D")
+healed_text = "Ah..."
+
+[node name="Enemy2" parent="." instance=ExtResource( 4 )]
+position = Vector2( 280, 128 )
+speed = 55.0
+follow = false
+healed_text = "Our trio returns."
+
+[node name="Enemy3" parent="." instance=ExtResource( 4 )]
+position = Vector2( 248, 160 )
+speed = 55.0
+follow = false
+shoot = false
+ground_attack = true
+healed_text = "My friends!"
+
+[node name="LoadingZone" parent="." instance=ExtResource( 3 )]
+position = Vector2( 320, 56 )
+target_scene = "res://Scenes/Overworld/Overworld_11.tscn"
+direction = 3
+
+[node name="CollisionShape2D" parent="LoadingZone" index="0"]
+shape = SubResource( 2 )
+
+[node name="LoadingZone2" parent="." instance=ExtResource( 3 )]
+position = Vector2( 160, 0 )
+target_scene = "res://Scenes/Overworld/Overworld_8.tscn"
+
+[node name="CollisionShape2D" parent="LoadingZone2" index="0"]
+shape = SubResource( 3 )
+[connection signal="room_is_cleared" from="." to="Barrier" method="queue_free"]
+[connection signal="healed" from="Enemy" to="." method="clear_room"]
+[connection signal="healed" from="Enemy2" to="." method="clear_room"]
+[connection signal="healed" from="Enemy3" to="." method="clear_room"]
+
+[editable path="LoadingZone"]
+
+[editable path="LoadingZone2"]

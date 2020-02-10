@@ -61,7 +61,7 @@ impl Enemy {
 			face: Direction::Down,
 			walking: false,
 
-			health: 2,
+			health: 1,
 			healed: false,
 			in_area: false,
 
@@ -103,7 +103,7 @@ impl Enemy {
 		.done();
 
 		builder.add_property::<u16>("health")
-		.with_default(2)
+		.with_default(1)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.health = v)
 		.done();
 
@@ -205,7 +205,7 @@ impl Enemy {
 		}
 
 		if self.follow && !self.healed && !self.nav_node.is_none() {
-			self.move_along_path(self.speed * delta as f32, owner);
+			self.move_along_path(owner, self.speed * delta as f32);
 			self.walking = self.velocity != Vector2::zero();
 		}
 
@@ -298,7 +298,8 @@ impl Enemy {
 			let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
 			let mut bullet_r = bullet.unwrap().cast::<RigidBody2D>().unwrap();
 			bullet_r.set_position(owner.get_position());
-			bullet_r.set_global_rotation(owner.get_position().angle_to(owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_position()).get() as f64);
+			let player_ref = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
+			bullet_r.set_global_rotation(owner.get_global_position().angle_to(player_ref.get_global_position()).get() as f64);
 			owner.get_tree().unwrap().get_current_scene().unwrap().add_child(bullet, false);
 			self.timer_shoot.unwrap().set_wait_time(if self.fast_fire { rand_range!(owner, 0.8, 1.5) } else { rand_range!(owner, 1.5, 3.0) });
 		}
@@ -306,6 +307,7 @@ impl Enemy {
 
 	#[export]
 	pub unsafe fn _on_TimerNav_timeout(&mut self, owner: KinematicBody2D) {
+		//godot_print!("NAV UPDATE");
 		self.nav_path = self.nav_node.unwrap().get_simple_path(owner.get_global_position(), owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_global_position(), false);
 	}
 
@@ -370,13 +372,14 @@ impl Enemy {
 		self.spr.unwrap().play(anim, false);
 	}
 
-	unsafe fn move_along_path(&mut self, mut distance: f32, owner: KinematicBody2D) {
+	unsafe fn move_along_path(&mut self, owner: KinematicBody2D, mut distance: f32,) {
+		godot_print!("TEST");
 		let mut start_point = owner.get_global_position();
 		for _ in 0..self.nav_path.len() {
 			let target = self.nav_path.get(0);
 			let dist = ((target.x - start_point.x).powi(2) + (target.y - start_point.y).powi(2)).sqrt();
 			if distance <= dist && dist >= 0.0 {
-				let angle = owner.get_position().angle_to(target).get();
+				let angle = owner.get_global_position().angle_to(target).get();
 				self.velocity = Vector2::new(angle.cos(), angle.sin());
 				break;
 			}

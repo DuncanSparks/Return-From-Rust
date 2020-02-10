@@ -6,14 +6,14 @@ use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot
 use crate::*;
 
 use controller::Controller;
-use enemy::Enemy;
 
 
 #[derive(gd::NativeClass)]
 #[inherit(gd::Node2D)]
 #[register_with(Self::register_properties)]
 pub struct Room {
-
+	enemy_count: u8,
+	enemies_healed: u8
 }
 
 
@@ -21,7 +21,8 @@ pub struct Room {
 impl Room {
 	fn _init(_owner: gd::Node2D) -> Room {
 		Room {
-
+			enemy_count: 0,
+			enemies_healed: 0
 		}
 	}
 
@@ -38,7 +39,13 @@ impl Room {
 	}
 
 	#[export]
-	pub unsafe fn _ready(&self, mut owner: Node2D) {
+	pub unsafe fn _ready(&mut self, mut owner: Node2D) {
+		for enemy in owner.get_tree().unwrap().get_current_scene().unwrap().get_children().iter() {
+			if enemy.try_to_object::<Node>().unwrap().is_in_group("Enemy".into()) {
+				self.enemy_count += 1;
+			}
+		}
+
 		let contr_ref = get_singleton!(owner, Node, Controller).into_script();
 		let id = owner.get_filename();
 		if contr_ref.map(|contr| { contr.is_room_cleared(id.new_ref()) }).unwrap() {
@@ -60,19 +67,10 @@ impl Room {
 
 	#[export]
 	pub unsafe fn clear_room(&mut self, mut owner: Node2D) {
-		let mut cleared = true;
-		for enemy in owner.get_tree().unwrap().get_nodes_in_group("Enemy".into()).iter() {
-			let e = Instance::<Enemy>::try_from_unsafe_base(enemy.try_to_object::<KinematicBody2D>().unwrap());
-			if !e.unwrap().into_script().map(|en| { en.is_healed() }).unwrap() {
-				cleared = false;
-			}
-		}
-
-		if cleared {
+		self.enemies_healed += 1;
+		if self.enemies_healed >= self.enemy_count {
 			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.add_room_cleared(owner.get_filename()); }).unwrap();
-			if owner.get_filename() != "res://Scenes/Overworld/Overworld_1.tscn".into() {
-				owner.emit_signal("room_is_cleared".into(), &[]);
-			}
+			owner.emit_signal("room_is_cleared".into(), &[]);
 		}
 	}
 }
