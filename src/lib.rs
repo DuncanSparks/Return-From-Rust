@@ -12,6 +12,8 @@ mod fountain;
 mod loading_zone;
 mod start;
 mod title;
+mod world_text;
+mod room;
 
 fn init(handle: InitHandle) {
 	handle.add_class::<player::Player>();
@@ -24,6 +26,8 @@ fn init(handle: InitHandle) {
 	handle.add_class::<loading_zone::LoadingZone>();
 	handle.add_class::<start::Start>();
 	handle.add_class::<title::Title>();
+	handle.add_class::<world_text::WorldText>();
+	handle.add_class::<room::Room>();
 }
 
 godot_gdnative_init!();

@@ -58,7 +58,6 @@ impl Title {
 		self.set_buttons_active(owner, false);
 		get_node!(owner, AudioStreamPlayer, "SoundClick").unwrap().play(0.0);
 		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("Fadeout Keep Music".into(), -1.0, 1.0, false);
-		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("Fadein Credits".into(), -1.0, 1.0, false);
 	}
 
 	#[export]

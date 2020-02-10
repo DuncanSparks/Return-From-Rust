@@ -198,6 +198,18 @@ impl Controller {
 	}
 
 	pub fn fountain_is_purified(&self, fountain_id: GodotString) -> bool {
-		self.enemies_healed.contains_key(&fountain_id)
+		self.fountains_purified.contains_key(&fountain_id)
+	}
+
+	pub fn all_fountains_purified(&self) -> bool {
+		self.fountains_purified.len() >= 5
+	}
+
+	pub fn add_room_cleared(&mut self, room: GodotString) {
+		self.rooms_cleared.push(room);
+	}
+
+	pub fn is_room_cleared(&self, room: GodotString) -> bool {
+		self.rooms_cleared.contains(&room)
 	}
 }

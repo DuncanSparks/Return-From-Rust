@@ -282,6 +282,7 @@ custom_fonts/font = ExtResource( 3 )
 custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+disabled = true
 action_mode = 0
 text = "Start"
 __meta__ = {
@@ -302,6 +303,7 @@ custom_fonts/font = ExtResource( 3 )
 custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+disabled = true
 text = "Credits"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -321,6 +323,7 @@ custom_fonts/font = ExtResource( 3 )
 custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+disabled = true
 text = "Exit"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -340,6 +343,7 @@ custom_fonts/font = SubResource( 7 )
 custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+disabled = true
 text = "Speedrun Timer - Off"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -461,3 +465,4 @@ __meta__ = {
 [connection signal="pressed" from="ButtonCredits" to="." method="_on_ButtonCredits_pressed"]
 [connection signal="pressed" from="ButtonExit" to="." method="_on_ButtonExit_pressed"]
 [connection signal="pressed" from="ButtonSpeedrunTimer" to="." method="_on_ButtonSpeedrunTimer_pressed"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
