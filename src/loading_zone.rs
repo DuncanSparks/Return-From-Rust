@@ -47,13 +47,18 @@ impl LoadingZone {
 	pub unsafe fn _on_LoadingZone_body_entered(&mut self, owner: Area2D, body: Node) {
 		if body.is_in_group("Player".into()) {
 			let player_ref = get_instance_ref!(Player, body, KinematicBody2D);
+			godot_print!("MARK 1");
 			if player_ref.into_script().map(|player| { !player.is_loading() }).unwrap() {
 				let player_ref_2 = get_instance_ref!(Player, body, KinematicBody2D).into_script();
+				godot_print!("MARK 2");
 				player_ref_2.map_mut(|player| { player.set_loading(true); }).unwrap();
 				player_ref_2.map_mut(|player| { player.set_face(Direction::from_u8(self.direction)); }).unwrap();
-				
+
+				godot_print!("MARK 3");
+
 				let mut player_ref_3 = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
 				let pos = player_ref_3.get_position();
+				godot_print!("MARK 4");
 				match self.direction {
 					0 => player_ref_3.set_position(Vector2::new(pos.x, 160.0)),
 					1 => player_ref_3.set_position(Vector2::new(pos.x, 20.0)),
@@ -62,11 +67,18 @@ impl LoadingZone {
 					_ => player_ref_3.set_position(Vector2::new(pos.x, 160.0))
 				}
 
+				godot_print!("MARK 5");
+
 				owner.get_tree().unwrap().change_scene(self.target_scene.clone()).unwrap();
+
+				godot_print!("MARK 6");
 
 				player_ref_2.map_mut(|player| { player.set_bullet_available(true); }).unwrap();
 
+				godot_print!("MARK 7");
+
 				get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.after_load(owner); }).unwrap();
+				godot_print!("MARK 9");
 			}
 		}
 	}

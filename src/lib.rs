@@ -1,3 +1,5 @@
+#![allow(non_snake_case)]
+
 use gdnative::*;
 use init::InitHandle;
 
@@ -14,6 +16,9 @@ mod start;
 mod title;
 mod world_text;
 mod room;
+mod demon_king;
+mod boss_bullet;
+mod game_over;
 
 fn init(handle: InitHandle) {
 	handle.add_class::<player::Player>();
@@ -28,6 +33,8 @@ fn init(handle: InitHandle) {
 	handle.add_class::<title::Title>();
 	handle.add_class::<world_text::WorldText>();
 	handle.add_class::<room::Room>();
+	handle.add_class::<demon_king::DemonKing>();
+	handle.add_class::<game_over::GameOver>();
 }
 
 godot_gdnative_init!();

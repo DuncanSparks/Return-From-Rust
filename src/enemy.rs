@@ -227,6 +227,7 @@ impl Enemy {
 
 	#[export]
 	pub unsafe fn _exit_tree(&self, _owner: KinematicBody2D) {
+		// TODO: THIS CRASHES THE GAME WHEN MULTIPLE ENEMIES ARE IN THE SCENE
 		deallocate!(self.bullet_ref);
 		deallocate!(self.ground_attack_ref);
 		deallocate!(self.parts_healed);
@@ -234,8 +235,6 @@ impl Enemy {
 
 	//#[export]
 	pub unsafe fn hit(&mut self, owner: KinematicBody2D) {
-		get_node!(owner, AudioStreamPlayer, "SoundHit").unwrap().play(0.0);
-
 		let parts = self.parts_healed.as_ref().unwrap().instance(0);
 		let mut parts_ref = parts.unwrap().cast::<Particles2D>().unwrap();
 		parts_ref.set_position(owner.get_position());
@@ -245,6 +244,9 @@ impl Enemy {
 		self.health -= 1;
 		if self.health <= 0 {
 			self.heal(owner, false);
+		}
+		else {
+			get_node!(owner, AudioStreamPlayer, "SoundHit").unwrap().play(0.0);
 		}
 	}
 
@@ -298,8 +300,15 @@ impl Enemy {
 			let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
 			let mut bullet_r = bullet.unwrap().cast::<RigidBody2D>().unwrap();
 			bullet_r.set_position(owner.get_position());
+			
 			let player_ref = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
-			bullet_r.set_global_rotation(owner.get_global_position().angle_to(player_ref.get_global_position()).get() as f64);
+			//bullet_r.set_global_rotation(owner.get_global_position().angle_to(player_ref.get_global_position()).get() as f64);
+			let vec = (player_ref.get_global_position() - owner.get_global_position()).normalize();
+			let angle = vec.x.atan2(vec.y) as f64;
+			bullet.unwrap().cast::<RigidBody2D>().unwrap().set_global_rotation(angle);
+
+
+			
 			owner.get_tree().unwrap().get_current_scene().unwrap().add_child(bullet, false);
 			self.timer_shoot.unwrap().set_wait_time(if self.fast_fire { rand_range!(owner, 0.8, 1.5) } else { rand_range!(owner, 1.5, 3.0) });
 		}
@@ -333,6 +342,14 @@ impl Enemy {
 
 	pub fn is_healed(&self) -> bool {
 		self.healed
+	}
+
+	pub fn set_speed(&mut self, value: f32) {
+		self.speed = value;
+	}
+
+	pub fn set_navigator(&mut self, value: NodePath) {
+		self.navigator = value;
 	}
 
 	// =====================================================================
@@ -373,7 +390,7 @@ impl Enemy {
 	}
 
 	unsafe fn move_along_path(&mut self, owner: KinematicBody2D, mut distance: f32,) {
-		godot_print!("TEST");
+		//godot_print!("TEST");
 		let mut start_point = owner.get_global_position();
 		for _ in 0..self.nav_path.len() {
 			let target = self.nav_path.get(0);

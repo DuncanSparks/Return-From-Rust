@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://Fonts/FontLarge.tres" type="DynamicFont" id=1]
-[ext_resource path="res://Scripts/GameOver.gd" type="Script" id=2]
+[ext_resource path="res://Scripts/GameOver.gdns" type="Script" id=2]
 [ext_resource path="res://Audio/game_over.wav" type="AudioStream" id=3]
 
 [sub_resource type="Animation" id=1]

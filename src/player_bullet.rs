@@ -49,12 +49,15 @@ impl PlayerBullet {
 	}
 
 	#[export]
-	pub unsafe fn _ready(&self, mut owner: gd::RigidBody2D) {
+	pub unsafe fn _ready(&mut self, mut owner: gd::RigidBody2D) {
 		if !self.stopped {
-			owner.set_linear_velocity(Vector2::new(PlayerBullet::SPEED, 0.0));
+			let ang = Angle::radians(owner.get_global_rotation() as f32);
+			let ang_deg = ang.positive().to_degrees() - 90.0;
+			owner.set_linear_velocity(Vector2::new(PlayerBullet::SPEED, 0.0).rotated(-Angle::radians(ang_deg.to_radians())));
 		}
 		else {
 			owner.set_angular_velocity(0.0);
+			self.can_pick_up = true;
 		}
 	}
 

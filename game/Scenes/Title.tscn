@@ -260,7 +260,7 @@ __meta__ = {
 position = Vector2( 336, 88 )
 amount = 280
 lifetime = 14.0
-preprocess = 10.0
+preprocess = 12.0
 process_material = SubResource( 1 )
 
 [node name="MusicTitle" type="AudioStreamPlayer" parent="."]

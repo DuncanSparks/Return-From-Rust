@@ -1,21 +1,24 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/PlayerBullet.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/Objects/Orb.png" type="Texture" id=2]
 [ext_resource path="res://Audio/Pickup.ogg" type="AudioStream" id=3]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="PhysicsMaterial" id=1]
+bounce = 0.8
 
 [sub_resource type="CircleShape2D" id=2]
+
+[sub_resource type="CircleShape2D" id=3]
 radius = 13.0384
 
-[sub_resource type="Gradient" id=3]
+[sub_resource type="Gradient" id=4]
 colors = PoolColorArray( 0, 1, 0, 1, 0, 1, 0, 0 )
 
-[sub_resource type="GradientTexture" id=4]
-gradient = SubResource( 3 )
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
 
-[sub_resource type="ParticlesMaterial" id=5]
+[sub_resource type="ParticlesMaterial" id=6]
 flag_disable_z = true
 direction = Vector3( 0, -1, 0 )
 spread = 180.0
@@ -24,9 +27,9 @@ initial_velocity = 50.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 2.0
-color_ramp = SubResource( 4 )
+color_ramp = SubResource( 5 )
 
-[sub_resource type="ParticlesMaterial" id=6]
+[sub_resource type="ParticlesMaterial" id=7]
 flag_disable_z = true
 direction = Vector3( 0, -1, 0 )
 spread = 180.0
@@ -36,9 +39,9 @@ initial_velocity_random = 0.5
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 2.0
-color_ramp = SubResource( 4 )
+color_ramp = SubResource( 5 )
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=8]
 length = 0.4
 loop = true
 tracks/0/type = "value"
@@ -60,6 +63,7 @@ tracks/0/keys = {
 collision_layer = 2
 collision_mask = 32
 mass = 0.00102041
+physics_material_override = SubResource( 1 )
 gravity_scale = 0.0
 contacts_reported = 1
 contact_monitor = true
@@ -71,7 +75,7 @@ __meta__ = {
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
 scale = Vector2( 2, 2 )
@@ -81,12 +85,12 @@ hframes = 3
 [node name="AreaPickUp" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AreaPickUp"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="PartsIdle" type="Particles2D" parent="."]
 amount = 16
 local_coords = false
-process_material = SubResource( 5 )
+process_material = SubResource( 6 )
 
 [node name="PartsPickUp" type="Particles2D" parent="."]
 emitting = false
@@ -94,11 +98,11 @@ amount = 32
 one_shot = true
 explosiveness = 1.0
 local_coords = false
-process_material = SubResource( 6 )
+process_material = SubResource( 7 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Idle"
-anims/Idle = SubResource( 7 )
+anims/Idle = SubResource( 8 )
 
 [node name="SoundPickUp" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )

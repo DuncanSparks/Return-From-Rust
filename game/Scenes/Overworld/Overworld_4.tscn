@@ -5,7 +5,6 @@
 [ext_resource path="res://Prefabs/Enemy.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Scripts/Room.gdns" type="Script" id=5]
 
-
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 40, 40, 280, 40, 280, 152, 184, 152, 184, 168, 136, 168, 136, 152, 40, 152 )
 polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 3, 4, 5, 6 ), PoolIntArray( 0, 3, 6 ), PoolIntArray( 0, 6, 7 ) ]
@@ -66,14 +65,14 @@ navpoly = SubResource( 1 )
 [node name="Enemy" parent="." instance=ExtResource( 3 )]
 position = Vector2( 200, 64 )
 speed = 40.0
-navigator = NodePath("../Navigation2D")
 healed_text = "The king is in there."
+navigator = NodePath("../Navigation2D")
 
 [node name="Enemy2" parent="." instance=ExtResource( 3 )]
 position = Vector2( 116.955, 64.5688 )
 speed = 40.0
-navigator = NodePath("../Navigation2D")
 healed_text = "Purify the fountains."
+navigator = NodePath("../Navigation2D")
 
 [node name="LoadingZone" parent="." instance=ExtResource( 2 )]
 position = Vector2( 160, 184 )

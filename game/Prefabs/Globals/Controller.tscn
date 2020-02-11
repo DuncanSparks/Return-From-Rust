@@ -129,6 +129,8 @@ playback_speed = 1.5
 anims/Idle = SubResource( 1 )
 
 [node name="TimerAfterLoad" type="Timer" parent="."]
+wait_time = 0.2
+one_shot = true
 
 [node name="MusicDistorted" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 5 )

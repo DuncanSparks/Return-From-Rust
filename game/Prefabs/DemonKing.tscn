@@ -1,0 +1,130 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Scripts/DemonKing.gdns" type="Script" id=1]
+[ext_resource path="res://Sprites/Enemies/Boss.png" type="Texture" id=2]
+[ext_resource path="res://Sprites/Enemies/Boss_healed.png" type="Texture" id=6]
+
+[sub_resource type="Shader" id=1]
+code = "shader_type canvas_item;
+
+// From https://thebookofshaders.com/06/
+vec3 rgb2hsb(vec3 c){
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz),
+                vec4(c.gb, K.xy),
+                step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r),
+                vec4(c.r, p.yzx),
+                step(p.x, c.r));
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)),
+                d / (q.x + e),
+                q.x);
+}
+
+vec3 hsb2rgb(vec3 c){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                    6.0)-3.0)-1.0,
+                    0.0,
+                    1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix(vec3(1.0), rgb, c.y);
+}
+
+// How much you want to shift the hue by
+uniform float shift_amount : hint_range(0, 1);
+
+void fragment() {
+    // Get color from the sprite texture at the current pixel we are rendering
+    vec4 original_color = texture(TEXTURE, UV);
+    vec3 col = original_color.rgb;
+    // If not greyscale
+    if(col[0] != col[1] || col[1] != col[2]) {
+        vec3 hsb = rgb2hsb(col);
+        // Shift the color by shift_amount, but rolling over the value goes over 1
+        hsb.x = mod(hsb.x + shift_amount, 1.0);
+        col = hsb2rgb(hsb);
+    }
+    COLOR = vec4(col.rgb, original_color.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=2]
+shader = SubResource( 1 )
+shader_param/shift_amount = 0.0
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "idle",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "healed",
+"speed": 5.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=4]
+extents = Vector2( 13, 14 )
+
+[sub_resource type="Animation" id=5]
+resource_name = "Idle"
+length = 2.0
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/shift_amount")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.088 ]
+}
+
+[node name="DemonKing" type="KinematicBody2D" groups=[
+"Enemy",
+]]
+position = Vector2( 160, 32 )
+collision_layer = 3
+collision_mask = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="Sprite" type="AnimatedSprite" parent="."]
+material = SubResource( 2 )
+position = Vector2( -3, 0 )
+frames = SubResource( 3 )
+animation = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 11 )
+shape = SubResource( 4 )
+
+[node name="TimerTeleport" type="Timer" parent="."]
+one_shot = true
+
+[node name="TimerTeleport2" type="Timer" parent="."]
+one_shot = true
+
+[node name="TimerAttack" type="Timer" parent="."]
+one_shot = true
+
+[node name="TimerBullet" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+anims/Idle = SubResource( 5 )
+[connection signal="timeout" from="TimerTeleport" to="." method="tele_out"]
+[connection signal="timeout" from="TimerTeleport2" to="." method="tele_in"]
+[connection signal="timeout" from="TimerAttack" to="." method="attack"]
+[connection signal="timeout" from="TimerBullet" to="." method="fire_bullet"]

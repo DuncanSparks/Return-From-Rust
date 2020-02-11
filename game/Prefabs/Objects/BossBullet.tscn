@@ -1,0 +1,177 @@
+[gd_scene load_steps=13 format=2]
+
+[ext_resource path="res://Scripts/BossBullet.gdns" type="Script" id=1]
+[ext_resource path="res://Sprites/Objects/Orb.png" type="Texture" id=2]
+[ext_resource path="res://Audio/Pickup.ogg" type="AudioStream" id=3]
+[ext_resource path="res://Audio/GroundAttack.ogg" type="AudioStream" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+
+[sub_resource type="Shader" id=2]
+code = "shader_type canvas_item;
+
+// From https://thebookofshaders.com/06/
+vec3 rgb2hsb(vec3 c){
+    vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
+    vec4 p = mix(vec4(c.bg, K.wz),
+                vec4(c.gb, K.xy),
+                step(c.b, c.g));
+    vec4 q = mix(vec4(p.xyw, c.r),
+                vec4(c.r, p.yzx),
+                step(p.x, c.r));
+    float d = q.x - min(q.w, q.y);
+    float e = 1.0e-10;
+    return vec3(abs(q.z + (q.w - q.y) / (6.0 * d + e)),
+                d / (q.x + e),
+                q.x);
+}
+
+vec3 hsb2rgb(vec3 c){
+    vec3 rgb = clamp(abs(mod(c.x*6.0+vec3(0.0,4.0,2.0),
+                    6.0)-3.0)-1.0,
+                    0.0,
+                    1.0 );
+    rgb = rgb*rgb*(3.0-2.0*rgb);
+    return c.z * mix(vec3(1.0), rgb, c.y);
+}
+
+// How much you want to shift the hue by
+uniform float shift_amount : hint_range(0, 1);
+
+void fragment() {
+    // Get color from the sprite texture at the current pixel we are rendering
+    vec4 original_color = texture(TEXTURE, UV);
+    vec3 col = original_color.rgb;
+    // If not greyscale
+    if(col[0] != col[1] || col[1] != col[2]) {
+        vec3 hsb = rgb2hsb(col);
+        // Shift the color by shift_amount, but rolling over the value goes over 1
+        hsb.x = mod(hsb.x + shift_amount, 1.0);
+        col = hsb2rgb(hsb);
+    }
+    COLOR = vec4(col.rgb, original_color.a);
+}
+"
+
+[sub_resource type="ShaderMaterial" id=3]
+shader = SubResource( 2 )
+shader_param/shift_amount = 0.666
+
+[sub_resource type="Gradient" id=4]
+colors = PoolColorArray( 1, 0, 0, 1, 1, 0, 0, 0 )
+
+[sub_resource type="GradientTexture" id=5]
+gradient = SubResource( 4 )
+
+[sub_resource type="ParticlesMaterial" id=6]
+flag_disable_z = true
+direction = Vector3( 0, -1, 0 )
+spread = 180.0
+gravity = Vector3( 0, 0, 0 )
+initial_velocity = 50.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+scale = 2.0
+color_ramp = SubResource( 5 )
+
+[sub_resource type="Animation" id=7]
+length = 0.4
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3 ),
+"transitions": PoolRealArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 2, 1 ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "Explode"
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 2, 2 ) ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/keys = {
+"times": PoolRealArray( 0, 0.5, 1 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+
+[node name="BossBullet" type="RigidBody2D" groups=[
+"Bullet",
+]]
+collision_layer = 96
+collision_mask = 96
+mass = 0.00102041
+gravity_scale = 0.0
+contacts_reported = 1
+contact_monitor = true
+linear_damp = 0.8
+angular_velocity = 5.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+material = SubResource( 3 )
+scale = Vector2( 2, 2 )
+texture = ExtResource( 2 )
+hframes = 3
+
+[node name="PartsIdle" type="Particles2D" parent="."]
+amount = 16
+local_coords = false
+process_material = SubResource( 6 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+autoplay = "Idle"
+anims/Idle = SubResource( 7 )
+
+[node name="SoundPickUp" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -10.0
+
+[node name="SoundExplode" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+pitch_scale = 0.8
+
+[node name="TimerStopHitting" type="Timer" parent="."]
+wait_time = 1.1
+one_shot = true
+
+[node name="TimerExplode" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+autostart = true
+
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
+playback_speed = 2.0
+anims/Explode = SubResource( 8 )
+[connection signal="body_entered" from="." to="." method="_on_BossBullet_body_entered"]
+[connection signal="timeout" from="TimerStopHitting" to="." method="_on_TimerStopHitting_timeout"]
+[connection signal="timeout" from="TimerExplode" to="." method="_on_TimerExplode_timeout"]
+[connection signal="animation_finished" from="AnimationPlayer2" to="." method="_on_AnimationPlayer2_animation_finished"]

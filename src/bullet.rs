@@ -5,7 +5,6 @@ use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot
 use gd::user_data::*;
 
 use player::Player;
-use controller::Controller;
 
 use crate::*;
 
@@ -42,11 +41,15 @@ impl Bullet {
 
 		//godot_print!("{}", owner.get_global_rotation());
 		//godot_print!("{}", owner.get_global_rotation().to_degrees());
-		owner.set_linear_velocity(Vector2::new(Bullet::SPEED, 0.0).rotated(Angle::radians(owner.get_global_rotation() as f32)));
+		let ang = Angle::radians(owner.get_global_rotation() as f32);
+		let ang_deg = ang.positive().to_degrees() - 90.0;
+		owner.set_linear_velocity(Vector2::new(Bullet::SPEED, 0.0).rotated(-Angle::radians(ang_deg.to_radians())));
+		//get_node!(owner, Sprite, "Sprite").unwrap().set_rotation(get_node!(owner, Sprite, "Sprite").unwrap().get_rotation() * -1.0);
+		//owner.set_linear_velocity(Vector2::new(Bullet::SPEED, 0.0).rotated(Angle::radians(owner.get_global_rotation() as f32)));
 
-		if rand_range!(owner, 0.0, 1.0) > 0.5 {
+		/*if rand_range!(owner, 0.0, 1.0) > 0.5 {
 			get_node!(owner, Sprite, "Sprite").unwrap().set_flip_v(true);
-		}
+		}*/
 	}
 
 	#[export]

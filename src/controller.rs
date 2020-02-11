@@ -89,7 +89,9 @@ impl Controller {
 		self.timer_text.unwrap().set_text(GodotString::from(self.timer.to_string()));
 
 		self.text_healed.unwrap().set_text(format!("Healed: {}", self.num_enemies_healed).into());
-		self.healthbar.unwrap().set_value(5.0);
+		
+		let player_hp = get_singleton!(owner, KinematicBody2D, Player).into_script().map(|pl| { pl.get_health() }).unwrap();
+		self.healthbar.unwrap().set_value(player_hp as f64);
 
 		let inp = Input::godot_singleton();
 		if inp.is_action_just_pressed("sys_fullscreen".into()) {
@@ -139,17 +141,23 @@ impl Controller {
 	}
 
 	pub unsafe fn after_load(&mut self, owner: Node) {
-		let timer = get_node!(owner, Timer, "TimerAfterLoad");
+		godot_print!("MARK 8");
+		/*let timer = get_node!(owner, Timer, "TimerAfterLoad");
 		timer.unwrap().set_wait_time(0.2);
-		timer.unwrap().start(0.0);
+		timer.unwrap().start(0.0);*/
+		get_node!(owner, Timer, "TimerAfterLoad").unwrap().start(0.0);
 	}
 
 	#[export]
 	pub unsafe fn after_load_2(&mut self, owner: Node) {
+		godot_print!("MARK 10");
 		let player_ref = get_singleton!(owner, KinematicBody2D, Player).into_script();
+		godot_print!("MARK 11");
 		player_ref.map_mut(|player| {
 			player.set_loading(false);
 		}).unwrap();
+
+		godot_print!("MARK 12");
 	}
 }
 
