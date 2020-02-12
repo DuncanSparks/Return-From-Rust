@@ -193,10 +193,6 @@ impl Enemy {
 			self.nav_path = self.nav_node.unwrap().get_simple_path(owner.get_global_position(), owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_global_position(), false);
 			get_node!(owner, Timer, "TimerNav").unwrap().start(0.0);
 		}
-
-		/*if self.ground_attack {
-			self.spr.unwrap().get_material().unwrap().cast::<ShaderMaterial>().unwrap().set_shader_param("shift_amount".into(), 0.888.to_variant());
-		}*/
 	}
 
 	#[export]
@@ -223,6 +219,7 @@ impl Enemy {
 			self.spr.unwrap().play("healed".into(), false);
 		}
 
+		owner.update();
 	}
 
 	#[export]
@@ -245,6 +242,15 @@ impl Enemy {
 		else {
 			get_node!(owner, AudioStreamPlayer, "SoundHit").unwrap().play(0.0);
 		}
+	}
+
+	#[export]
+	pub unsafe fn _draw(&mut self, mut owner: gd::KinematicBody2D) {
+		let ow = owner;
+		for i in 0..self.nav_path.len() {
+			owner.draw_circle(self.nav_path.get(i) - ow.get_position(), 3.0, Color{r: 1.0, g: 1.0, b: 1.0, a: 1.0});
+		}
+		
 	}
 
 	pub unsafe fn heal(&mut self, mut owner: KinematicBody2D, room_start: bool) {
@@ -352,8 +358,6 @@ impl Enemy {
 	// =====================================================================
 
 	fn direction_management(&mut self) {
-		//let prev_face = self.face.clone();
-
 		if self.velocity.x == 0.0 {
 			match self.velocity.y as i8 {
 				-1 => self.face = Direction::Up,
@@ -387,13 +391,13 @@ impl Enemy {
 	}
 
 	unsafe fn move_along_path(&mut self, owner: KinematicBody2D, mut distance: f32,) {
-		//godot_print!("TEST");
 		let mut start_point = owner.get_global_position();
 		for _ in 0..self.nav_path.len() {
 			let target = self.nav_path.get(0);
+			godot_print!("{}", target);
 			let dist = ((target.x - start_point.x).powi(2) + (target.y - start_point.y).powi(2)).sqrt();
 			if distance <= dist && dist >= 0.0 {
-				let angle = owner.get_global_position().angle_to(target).get();
+				let angle = (owner.get_global_position().angle_to(target) + Angle::degrees(90.0)).get();
 				self.velocity = Vector2::new(angle.cos(), angle.sin());
 				break;
 			}

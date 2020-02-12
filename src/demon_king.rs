@@ -7,6 +7,7 @@ use gd::user_data::*;
 use crate::*;
 
 use enemy::Enemy;
+use player::Player;
 use controller::Controller;
 
 #[derive(gd::NativeClass)]
@@ -134,7 +135,7 @@ impl DemonKing {
 		owner.set_z_index(y);
 	}
 
-	//#[export]
+	#[export]
 	pub unsafe fn hit(&mut self, owner: KinematicBody2D) {
 		let parts = self.parts_healed.as_ref().unwrap().instance(0);
 		let mut parts_ref = parts.unwrap().cast::<Particles2D>().unwrap();
@@ -144,7 +145,22 @@ impl DemonKing {
 
 		self.health -= 1;
 		if self.health <= 0 {
-			// stuff
+			get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_healed.clone(), 6.0, 1.0); }).unwrap();
+			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.stop_timer(); }).unwrap();
+			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|pl| { pl.set_invincible(true); }).unwrap();
+			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|pl| { pl.set_lock_movement(true); }).unwrap();
+			get_node!(owner, AnimatedSprite, "Sprite").unwrap().play("healed".into(), false);
+
+			owner.get_tree().unwrap().get_current_scene().unwrap().get_node("MusicBoss".into()).unwrap().cast::<AudioStreamPlayer>().unwrap().stop();
+
+			self.timer_attack.unwrap().stop();
+			self.timer_teleport.unwrap().stop();
+			self.timer_teleport2.unwrap().stop();
+			self.healed = true;
+
+			owner.get_tree().unwrap().get_current_scene().unwrap().get_node("AnimationPlayer".into()).unwrap().cast::<AnimationPlayer>().unwrap().play("Fade".into(), -1.0, 1.0, false);
+			owner.get_tree().unwrap().get_current_scene().unwrap().get_node("TimerEnd1".into()).unwrap().cast::<Timer>().unwrap().start(0.0);
+			owner.get_tree().unwrap().get_current_scene().unwrap().get_node("TimerEnd2".into()).unwrap().cast::<Timer>().unwrap().start(0.0);
 		}
 		else {
 			get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_heal.clone(), 6.0, 1.0); }).unwrap();

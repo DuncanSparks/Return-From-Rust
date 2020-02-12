@@ -7,6 +7,8 @@ use crate::*;
 
 use std::cmp;
 
+use controller::Controller;
+
 
 #[derive(Clone)]
 pub enum Direction {
@@ -131,13 +133,17 @@ impl Player {
 		move_and_slide_default!(owner, self.velocity * Player::SPEED);
 	}
 
-	pub unsafe fn damage(&mut self, owner: KinematicBody2D, amount: u16) {
+	pub unsafe fn damage(&mut self, mut owner: KinematicBody2D, amount: u16) {
 		get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
 		self.health -= amount;
 		self.iframes = true;
 		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1.0, 1.0, false);
 		if self.health <= 0 {
-			// stuff
+			owner.hide();
+			self.lock_movement = true;
+			get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.show_ui(owner, false); }).unwrap();
+			get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.stop_music(owner); }).unwrap();
+			owner.get_tree().unwrap().change_scene("res://Scenes/GameOver.tscn".into()).unwrap();
 		}
 	}
 
@@ -187,6 +193,10 @@ impl Player {
 
 	pub fn is_in_iframes(&self) -> bool {
 		self.iframes
+	}
+
+	pub fn set_invincible(&mut self, value: bool) {
+		self.invincible = value;
 	}
 
 	// =====================================================================
