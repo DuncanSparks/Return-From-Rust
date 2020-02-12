@@ -45,7 +45,6 @@ impl PlayerBullet {
 			name: "picked_up",
 			args: &[]
 		});
-
 	}
 
 	#[export]

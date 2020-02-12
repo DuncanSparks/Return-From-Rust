@@ -59,8 +59,10 @@ impl Controller {
 		}
 	}
 
-	fn register_properties(_builder: &gd::init::ClassBuilder<Self>) {
-		
+	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
+		builder.add_property::<Option<PackedScene>>("sound_oneshot_ref")
+		.with_setter(|this: &mut Self, _owner: Node,  v| this.sound_oneshot_ref = v)
+		.done();
 	}
 
 	#[export]
@@ -69,8 +71,6 @@ impl Controller {
 		OS::godot_singleton().center_window();
 
 		Input::godot_singleton().set_mouse_mode(InputMouseMode::ModeHidden as i64);
-
-		self.sound_oneshot_ref = load!("res://Prefabs/SoundOneShot.tscn");
 
 		self.text_healed = get_node!(owner, Label, "CanvasLayer/Label");
 		self.timer_text = get_node!(owner, Label, "CanvasLayer2/TimerText");
@@ -97,11 +97,6 @@ impl Controller {
 		if inp.is_action_just_pressed("sys_fullscreen".into()) {
 			OS::godot_singleton().set_window_fullscreen(!OS::godot_singleton().is_window_fullscreen());
 		}
-	}
-
-	#[export]
-	pub unsafe fn _exit_tree(&self, _owner: Node) {
-		deallocate!(self.sound_oneshot_ref);
 	}
 
 	// =====================================================================
@@ -141,23 +136,15 @@ impl Controller {
 	}
 
 	pub unsafe fn after_load(&mut self, owner: Node) {
-		godot_print!("MARK 8");
-		/*let timer = get_node!(owner, Timer, "TimerAfterLoad");
-		timer.unwrap().set_wait_time(0.2);
-		timer.unwrap().start(0.0);*/
 		get_node!(owner, Timer, "TimerAfterLoad").unwrap().start(0.0);
 	}
 
 	#[export]
 	pub unsafe fn after_load_2(&mut self, owner: Node) {
-		godot_print!("MARK 10");
 		let player_ref = get_singleton!(owner, KinematicBody2D, Player).into_script();
-		godot_print!("MARK 11");
 		player_ref.map_mut(|player| {
 			player.set_loading(false);
 		}).unwrap();
-
-		godot_print!("MARK 12");
 	}
 }
 

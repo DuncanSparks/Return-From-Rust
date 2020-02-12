@@ -1,20 +1,25 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Resources/TileMap.tres" type="TileSet" id=1]
 [ext_resource path="res://Scripts/Room.gdns" type="Script" id=2]
 [ext_resource path="res://Prefabs/LoadingZone.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Prefabs/Enemy.tscn" type="PackedScene" id=4]
-
+[ext_resource path="res://Shaders/HueShift.shader" type="Shader" id=5]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 296, 24, 296, 152, 264, 152, 264, 136, 264, 104, 184, 104, 184, 72, 264, 72, 264, 40, 24, 24, 184, 40, 184, 136, 184, 152, 136, 152, 136, 136, 56, 152, 56, 136, 56, 72, 136, 72, 136, 104, 56, 104, 24, 152, 56, 40, 136, 40 )
 polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 0, 3, 4 ), PoolIntArray( 4, 5, 6, 7 ), PoolIntArray( 0, 4, 7 ), PoolIntArray( 0, 7, 8 ), PoolIntArray( 9, 0, 8, 10 ), PoolIntArray( 11, 3, 2, 12 ), PoolIntArray( 11, 12, 13, 14 ), PoolIntArray( 13, 15, 16, 14 ), PoolIntArray( 5, 11, 14 ), PoolIntArray( 17, 18, 19, 20 ), PoolIntArray( 16, 15, 21, 9 ), PoolIntArray( 20, 16, 9 ), PoolIntArray( 17, 20, 9 ), PoolIntArray( 22, 17, 9 ), PoolIntArray( 6, 5, 14 ), PoolIntArray( 10, 6, 14, 23 ), PoolIntArray( 23, 22, 9 ), PoolIntArray( 23, 9, 10 ) ]
 outlines = [ PoolVector2Array( 24, 24, 24, 152, 56, 152, 56, 136, 56, 104, 136, 104, 136, 72, 56, 72, 56, 40, 136, 40, 136, 136, 56, 136, 56, 152, 136, 152, 184, 152, 264, 152, 264, 136, 184, 136, 184, 104, 184, 72, 184, 40, 264, 40, 264, 72, 184, 72, 184, 104, 264, 104, 264, 136, 264, 152, 296, 152, 296, 24 ) ]
 
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 8, 24 )
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = ExtResource( 5 )
+shader_param/shift_amount = 0.888
 
 [sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 8, 24 )
+
+[sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 32, 8 )
 
 [node name="Scene" type="Node2D"]
@@ -64,8 +69,8 @@ navpoly = SubResource( 1 )
 [node name="Enemy" parent="." instance=ExtResource( 4 )]
 position = Vector2( 160, 88 )
 speed = 55.0
-navigator = NodePath("../Navigation2D")
 healed_text = "I believe in you."
+navigator = NodePath("../Navigation2D")
 
 [node name="Enemy2" parent="." instance=ExtResource( 4 )]
 position = Vector2( 160, 128 )
@@ -75,13 +80,16 @@ shoot = false
 ground_attack = true
 healed_text = "Below is the fountain."
 
+[node name="Sprite" parent="Enemy2" index="0"]
+material = SubResource( 2 )
+
 [node name="LoadingZone" parent="." instance=ExtResource( 3 )]
 position = Vector2( 320, 56 )
 target_scene = "res://Scenes/Overworld/Overworld_13.tscn"
 direction = 3
 
 [node name="CollisionShape2D" parent="LoadingZone" index="0"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="LoadingZone2" parent="." instance=ExtResource( 3 )]
 position = Vector2( 0, 56 )
@@ -89,7 +97,7 @@ target_scene = "res://Scenes/Overworld/Overworld_10.tscn"
 direction = 2
 
 [node name="CollisionShape2D" parent="LoadingZone2" index="0"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="LoadingZone3" parent="." instance=ExtResource( 3 )]
 position = Vector2( 160, 184 )
@@ -97,10 +105,12 @@ target_scene = "res://Scenes/Overworld/Overworld_12.tscn"
 direction = 1
 
 [node name="CollisionShape2D" parent="LoadingZone3" index="0"]
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 [connection signal="room_is_cleared" from="." to="Barrier" method="queue_free"]
 [connection signal="healed" from="Enemy" to="." method="clear_room"]
 [connection signal="healed" from="Enemy2" to="." method="clear_room"]
+
+[editable path="Enemy2"]
 
 [editable path="LoadingZone"]
 

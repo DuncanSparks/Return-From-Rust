@@ -1,8 +1,18 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://Scripts/DemonKing.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/Enemies/Boss.png" type="Texture" id=2]
+[ext_resource path="res://Audio/Hit.ogg" type="AudioStream" id=3]
+[ext_resource path="res://Audio/Heal.ogg" type="AudioStream" id=4]
+[ext_resource path="res://Audio/Shoot.ogg" type="AudioStream" id=5]
 [ext_resource path="res://Sprites/Enemies/Boss_healed.png" type="Texture" id=6]
+[ext_resource path="res://Audio/Teleport.ogg" type="AudioStream" id=7]
+[ext_resource path="res://Audio/Kick.ogg" type="AudioStream" id=8]
+[ext_resource path="res://Prefabs/Objects/Bullet.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Prefabs/Particles/PartsHealed.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Prefabs/Objects/BossBullet.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Prefabs/Enemy.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Prefabs/Particles/PartsTeleport.tscn" type="PackedScene" id=13]
 
 [sub_resource type="Shader" id=1]
 code = "shader_type canvas_item;
@@ -97,6 +107,16 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+sound_bullet = ExtResource( 5 )
+sound_healed = ExtResource( 4 )
+sound_teleport = ExtResource( 7 )
+sound_kick = ExtResource( 8 )
+sound_heal = ExtResource( 3 )
+bullet_ref = ExtResource( 9 )
+enemy_ref = ExtResource( 12 )
+ball_ref = ExtResource( 11 )
+parts_healed = ExtResource( 10 )
+parts_teleport = ExtResource( 13 )
 
 [node name="Sprite" type="AnimatedSprite" parent="."]
 material = SubResource( 2 )

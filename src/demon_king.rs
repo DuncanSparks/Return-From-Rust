@@ -1,7 +1,6 @@
 // DemonKing.rs
 
 use gdnative as gd;
-use gd::init::property;
 use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot_wrap_method_parameter_count};
 use gd::user_data::*;
 
@@ -78,9 +77,43 @@ impl DemonKing {
 		});
 
 		builder.add_property::<Option<AudioStream>>("sound_bullet")
-		.with_default(None)
-		//.with_hint(property::StringHint::ResourceType)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_bullet = v)
+		.done();
+
+		builder.add_property::<Option<AudioStream>>("sound_healed")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_healed = v)
+		.done();
+
+		builder.add_property::<Option<AudioStream>>("sound_teleport")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_teleport = v)
+		.done();
+
+		builder.add_property::<Option<AudioStream>>("sound_kick")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_kick = v)
+		.done();
+
+		builder.add_property::<Option<AudioStream>>("sound_heal")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_heal = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("bullet_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("enemy_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.enemy_ref = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("ball_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ball_ref = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("parts_healed")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_healed = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("parts_teleport")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_teleport = v)
 		.done();
 	}
 
@@ -91,12 +124,6 @@ impl DemonKing {
 		self.timer_attack = get_node!(owner, Timer, "TimerAttack");
 		self.timer_bullet = get_node!(owner, Timer, "TimerBullet");
 
-		self.bullet_ref = load!("res://Prefabs/Objects/Bullet.tscn");
-		self.enemy_ref = load!("res://Prefabs/Enemy.tscn");
-		self.ball_ref = load!("res://Prefabs/Objects/BossBullet.tscn");
-		self.parts_healed = load!("res://Prefabs/Particles/PartsHealed.tscn");
-		self.parts_teleport = load!("res://Prefabs/Particles/PartsTeleport.tscn");
-
 		self.timer_attack.unwrap().set_wait_time(rand_range!(owner, 2.5, 4.0));
 		self.timer_attack.unwrap().start(0.0);
 	}
@@ -105,14 +132,6 @@ impl DemonKing {
 	pub unsafe fn _process(&mut self, mut owner: gd::KinematicBody2D, _delta: f64) {
 		let y = owner.get_position().y as i64;
 		owner.set_z_index(y);
-	}
-
-	#[export]
-	pub unsafe fn _exit_tree(&self, _owner: KinematicBody2D) {
-		// TODO: THIS CRASHES THE GAME WHEN MULTIPLE ENEMIES ARE IN THE SCENE
-		/*deallocate!(self.bullet_ref);
-		deallocate!(self.ground_attack_ref);
-		deallocate!(self.parts_healed);*/
 	}
 
 	//#[export]
@@ -128,7 +147,7 @@ impl DemonKing {
 			// stuff
 		}
 		else {
-			get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_healed.clone(), 6.0, 1.0); }).unwrap();
+			get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_heal.clone(), 6.0, 1.0); }).unwrap();
 		}
 	}
 

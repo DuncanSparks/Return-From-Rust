@@ -1,19 +1,25 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Resources/TileMap.tres" type="TileSet" id=1]
 [ext_resource path="res://Scripts/Room.gdns" type="Script" id=2]
 [ext_resource path="res://Prefabs/LoadingZone.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Prefabs/Enemy.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Shaders/HueShift.shader" type="Shader" id=5]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 24, 24, 296, 24, 296, 40, 56, 40, 24, 104, 56, 72, 184, 104, 296, 72, 296, 152, 184, 136, 24, 152, 24, 136 )
 polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 0, 3, 5 ), PoolIntArray( 6, 4, 5, 7 ), PoolIntArray( 6, 7, 8, 9 ), PoolIntArray( 9, 8, 10, 11 ) ]
 outlines = [ PoolVector2Array( 24, 136, 24, 152, 296, 152, 296, 72, 56, 72, 56, 40, 296, 40, 296, 24, 24, 24, 24, 104, 184, 104, 184, 136 ) ]
 
-[sub_resource type="RectangleShape2D" id=2]
-extents = Vector2( 32, 8 )
+[sub_resource type="ShaderMaterial" id=2]
+resource_local_to_scene = true
+shader = ExtResource( 5 )
+shader_param/shift_amount = 0.888
 
 [sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 32, 8 )
+
+[sub_resource type="RectangleShape2D" id=4]
 extents = Vector2( 8, 24 )
 
 [node name="Scene" type="Node2D"]
@@ -75,12 +81,15 @@ ground_attack = true
 healed_text = "Thanks!"
 navigator = NodePath("../Navigation2D")
 
+[node name="Sprite" parent="Enemy2" index="0"]
+material = SubResource( 2 )
+
 [node name="LoadingZone" parent="." instance=ExtResource( 3 )]
 position = Vector2( 160, 0 )
 target_scene = "res://Scenes/Overworld/Overworld_16.tscn"
 
 [node name="CollisionShape2D" parent="LoadingZone" index="0"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="LoadingZone3" parent="." instance=ExtResource( 3 )]
 position = Vector2( 160, 184 )
@@ -88,7 +97,7 @@ target_scene = "res://Scenes/Overworld/Overworld_13.tscn"
 direction = 1
 
 [node name="CollisionShape2D" parent="LoadingZone3" index="0"]
-shape = SubResource( 2 )
+shape = SubResource( 3 )
 
 [node name="LoadingZone2" parent="." instance=ExtResource( 3 )]
 position = Vector2( 320, 88 )
@@ -96,10 +105,12 @@ target_scene = "res://Scenes/Overworld/Overworld_15.tscn"
 direction = 3
 
 [node name="CollisionShape2D" parent="LoadingZone2" index="0"]
-shape = SubResource( 3 )
+shape = SubResource( 4 )
 [connection signal="room_is_cleared" from="." to="Barrier" method="queue_free"]
 [connection signal="healed" from="Enemy" to="." method="clear_room"]
 [connection signal="healed" from="Enemy2" to="." method="clear_room"]
+
+[editable path="Enemy2"]
 
 [editable path="LoadingZone"]
 

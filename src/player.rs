@@ -50,7 +50,7 @@ pub struct Player {
 	bullet_ref: Option<PackedScene>,
 
 	spr: Option<AnimatedSprite>,
-	sound_kick: Option<AudioStreamPlayer>,
+	sound_kick: Option<AudioStreamPlayer>
 }
 
 
@@ -80,13 +80,14 @@ impl Player {
 		}
 	}
 
-	fn register_properties(_builder: &gd::init::ClassBuilder<Self>) {
+	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
+		builder.add_property::<Option<PackedScene>>("bullet_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = v)
+		.done();
 	}
 
 	#[export]
 	pub unsafe fn _ready(&mut self, mut owner: gd::KinematicBody2D) {
-		self.bullet_ref = load!("res://Prefabs/Objects/PlayerBullet.tscn");
-
 		self.spr = get_node!(owner, AnimatedSprite, "Sprite");
 		self.sound_kick = get_node!(owner, AudioStreamPlayer, "SoundKick");
 
@@ -128,11 +129,6 @@ impl Player {
 	#[export]
 	pub unsafe fn _physics_process(&mut self, mut owner: gd::KinematicBody2D, _delta: f64) {
 		move_and_slide_default!(owner, self.velocity * Player::SPEED);
-	}
-
-	#[export]
-	pub unsafe fn _exit_tree(&self, _owner: gd::KinematicBody2D) {
-		deallocate!(self.bullet_ref);
 	}
 
 	pub unsafe fn damage(&mut self, owner: KinematicBody2D, amount: u16) {

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Controller.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/UI/NinePatch.png" type="Texture" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Audio/battle_distorted.wav" type="AudioStream" id=5]
 [ext_resource path="res://Sprites/UI/Healthbar_back.png" type="Texture" id=6]
 [ext_resource path="res://Sprites/UI/Crosshair4C.png" type="Texture" id=7]
+[ext_resource path="res://Prefabs/SoundOneShot.tscn" type="PackedScene" id=8]
 
 [sub_resource type="Animation" id=1]
 resource_name = "Idle"
@@ -33,6 +34,7 @@ extents = Vector2( 184, 8 )
 
 [node name="Controller" type="Node"]
 script = ExtResource( 1 )
+sound_oneshot_ref = ExtResource( 8 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2

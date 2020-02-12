@@ -97,6 +97,18 @@ impl Enemy {
 			args: &[]
 		});
 
+		builder.add_property::<Option<PackedScene>>("bullet_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("ground_attack_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ground_attack_ref = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("parts_healed")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_healed = v)
+		.done();
+
 		builder.add_property::<f32>("speed")
 		.with_default(25.0)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.speed = v)
@@ -141,10 +153,6 @@ impl Enemy {
 
 	#[export]
 	pub unsafe fn _ready(&mut self, mut owner: gd::KinematicBody2D) {
-		self.bullet_ref = load!("res://Prefabs/Objects/Bullet.tscn");
-		self.ground_attack_ref = load!("res://Prefabs/Objects/GroundAttack.tscn");
-		self.parts_healed = load!("res://Prefabs/Particles/PartsHealed.tscn");
-
 		self.timer = get_node!(owner, Timer, "Timer");
 		self.spr = get_node!(owner, AnimatedSprite, "Sprite");
 		self.text = get_node!(owner, RichTextLabel, "Text");
@@ -186,12 +194,9 @@ impl Enemy {
 			get_node!(owner, Timer, "TimerNav").unwrap().start(0.0);
 		}
 
-		if self.ground_attack {
-			let mat = self.spr.unwrap().get_material().unwrap().duplicate(false).unwrap().cast::<Material>();
-			self.spr.unwrap().set_material(mat);
-
+		/*if self.ground_attack {
 			self.spr.unwrap().get_material().unwrap().cast::<ShaderMaterial>().unwrap().set_shader_param("shift_amount".into(), 0.888.to_variant());
-		}
+		}*/
 	}
 
 	#[export]
@@ -223,14 +228,6 @@ impl Enemy {
 	#[export]
 	pub unsafe fn _physics_process(&mut self, mut owner: gd::KinematicBody2D, _delta: f64) {
 		move_and_slide_default!(owner, self.velocity * self.speed);
-	}
-
-	#[export]
-	pub unsafe fn _exit_tree(&self, _owner: KinematicBody2D) {
-		// TODO: THIS CRASHES THE GAME WHEN MULTIPLE ENEMIES ARE IN THE SCENE
-		deallocate!(self.bullet_ref);
-		deallocate!(self.ground_attack_ref);
-		deallocate!(self.parts_healed);
 	}
 
 	//#[export]

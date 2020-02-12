@@ -1,16 +1,21 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://Resources/TileMap.tres" type="TileSet" id=1]
 [ext_resource path="res://Prefabs/LoadingZone.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Prefabs/Enemy.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Shaders/HueShift.shader" type="Shader" id=4]
 [ext_resource path="res://Scripts/Room.gdns" type="Script" id=5]
-
 
 [sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 32, 8 )
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 32, 8 )
+
+[sub_resource type="ShaderMaterial" id=4]
+resource_local_to_scene = true
+shader = ExtResource( 4 )
+shader_param/shift_amount = 0.888
 
 [sub_resource type="NavigationPolygon" id=3]
 vertices = PoolVector2Array( 184, 136, 296, 136, 296, 168, 24, 168, 24, 136, 136, 136, 184, 104, 136, 104, 136, 88, 72, 88, 248, 88, 296, 104, 296, 24, 248, 56, 24, 24, 72, 56, 24, 104 )
@@ -73,8 +78,8 @@ shape = SubResource( 2 )
 
 [node name="Enemy" parent="." instance=ExtResource( 3 )]
 position = Vector2( 40, 152 )
-navigator = NodePath("../Navigation2D")
 healed_text = "Is the king still alive?"
+navigator = NodePath("../Navigation2D")
 
 [node name="Enemy2" parent="." instance=ExtResource( 3 )]
 position = Vector2( 272, 152 )
@@ -83,10 +88,13 @@ shoot = false
 ground_attack = true
 healed_text = "Is there anything left?"
 
+[node name="Sprite" parent="Enemy2" index="0"]
+material = SubResource( 4 )
+
 [node name="Enemy3" parent="." instance=ExtResource( 3 )]
 position = Vector2( 160, 104 )
-navigator = NodePath("../Navigation2D")
 healed_text = "I feel the dust leaving..."
+navigator = NodePath("../Navigation2D")
 
 [node name="Navigation2D" type="Navigation2D" parent="."]
 
@@ -104,3 +112,5 @@ __meta__ = {
 [editable path="LoadingZone"]
 
 [editable path="LoadingZone2"]
+
+[editable path="Enemy2"]
