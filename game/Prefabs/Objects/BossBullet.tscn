@@ -1,13 +1,16 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://Scripts/BossBullet.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/Objects/Orb.png" type="Texture" id=2]
 [ext_resource path="res://Audio/Pickup.ogg" type="AudioStream" id=3]
 [ext_resource path="res://Audio/GroundAttack.ogg" type="AudioStream" id=4]
 
-[sub_resource type="CircleShape2D" id=1]
+[sub_resource type="PhysicsMaterial" id=1]
+bounce = 0.8
 
-[sub_resource type="Shader" id=2]
+[sub_resource type="CircleShape2D" id=2]
+
+[sub_resource type="Shader" id=3]
 code = "shader_type canvas_item;
 
 // From https://thebookofshaders.com/06/
@@ -53,17 +56,17 @@ void fragment() {
 }
 "
 
-[sub_resource type="ShaderMaterial" id=3]
-shader = SubResource( 2 )
+[sub_resource type="ShaderMaterial" id=4]
+shader = SubResource( 3 )
 shader_param/shift_amount = 0.666
 
-[sub_resource type="Gradient" id=4]
+[sub_resource type="Gradient" id=5]
 colors = PoolColorArray( 1, 0, 0, 1, 1, 0, 0, 0 )
 
-[sub_resource type="GradientTexture" id=5]
-gradient = SubResource( 4 )
+[sub_resource type="GradientTexture" id=6]
+gradient = SubResource( 5 )
 
-[sub_resource type="ParticlesMaterial" id=6]
+[sub_resource type="ParticlesMaterial" id=7]
 flag_disable_z = true
 direction = Vector3( 0, -1, 0 )
 spread = 180.0
@@ -72,9 +75,9 @@ initial_velocity = 50.0
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
 scale = 2.0
-color_ramp = SubResource( 5 )
+color_ramp = SubResource( 6 )
 
-[sub_resource type="Animation" id=7]
+[sub_resource type="Animation" id=8]
 length = 0.4
 loop = true
 tracks/0/type = "value"
@@ -90,8 +93,7 @@ tracks/0/keys = {
 "values": [ 0, 1, 2, 1 ]
 }
 
-[sub_resource type="Animation" id=8]
-resource_name = "Explode"
+[sub_resource type="Animation" id=9]
 tracks/0/type = "value"
 tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
@@ -123,6 +125,7 @@ tracks/1/keys = {
 collision_layer = 96
 collision_mask = 96
 mass = 0.00102041
+physics_material_override = SubResource( 1 )
 gravity_scale = 0.0
 contacts_reported = 1
 contact_monitor = true
@@ -134,10 +137,10 @@ __meta__ = {
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 
 [node name="Sprite" type="Sprite" parent="."]
-material = SubResource( 3 )
+material = SubResource( 4 )
 scale = Vector2( 2, 2 )
 texture = ExtResource( 2 )
 hframes = 3
@@ -145,11 +148,11 @@ hframes = 3
 [node name="PartsIdle" type="Particles2D" parent="."]
 amount = 16
 local_coords = false
-process_material = SubResource( 6 )
+process_material = SubResource( 7 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Idle"
-anims/Idle = SubResource( 7 )
+anims/Idle = SubResource( 8 )
 
 [node name="SoundPickUp" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
@@ -170,7 +173,7 @@ autostart = true
 
 [node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
 playback_speed = 2.0
-anims/Explode = SubResource( 8 )
+anims/Explode = SubResource( 9 )
 [connection signal="body_entered" from="." to="." method="_on_BossBullet_body_entered"]
 [connection signal="timeout" from="TimerStopHitting" to="." method="_on_TimerStopHitting_timeout"]
 [connection signal="timeout" from="TimerExplode" to="." method="_on_TimerExplode_timeout"]

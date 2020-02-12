@@ -225,7 +225,7 @@ impl DemonKing {
 		owner.get_tree().unwrap().get_current_scene().unwrap().add_child(parts, false);
 		parts_ref.set_emitting(true);
 
-		get_node!(owner, Sprite, "Sprite").unwrap().hide();
+		get_node!(owner, AnimatedSprite, "Sprite").unwrap().hide();
 		get_node!(owner, CollisionShape2D, "CollisionShape2D").unwrap().set_disabled(true);
 		self.timer_teleport2.unwrap().set_wait_time(rand_range!(owner, 1.0, 2.0));
 		self.timer_teleport2.unwrap().start(0.0);
@@ -244,7 +244,7 @@ impl DemonKing {
 		owner.get_tree().unwrap().get_current_scene().unwrap().add_child(parts, false);
 		parts_ref.set_emitting(true);
 
-		get_node!(owner, Sprite, "Sprite").unwrap().show();
+		get_node!(owner, AnimatedSprite, "Sprite").unwrap().show();
 		get_node!(owner, CollisionShape2D, "CollisionShape2D").unwrap().set_disabled(false);
 		self.timer_attack.unwrap().set_wait_time(rand_range!(owner, 0.5, 1.0));
 		self.timer_attack.unwrap().start(0.0);

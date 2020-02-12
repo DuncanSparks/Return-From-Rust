@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://Scripts/Controller.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/UI/NinePatch.png" type="Texture" id=2]
@@ -6,25 +6,8 @@
 [ext_resource path="res://Sprites/UI/Healthbar_front.png" type="Texture" id=4]
 [ext_resource path="res://Audio/battle_distorted.wav" type="AudioStream" id=5]
 [ext_resource path="res://Sprites/UI/Healthbar_back.png" type="Texture" id=6]
-[ext_resource path="res://Sprites/UI/Crosshair4C.png" type="Texture" id=7]
 [ext_resource path="res://Prefabs/SoundOneShot.tscn" type="PackedScene" id=8]
-
-[sub_resource type="Animation" id=1]
-resource_name = "Idle"
-length = 0.8
-loop = true
-tracks/0/type = "value"
-tracks/0/path = NodePath("Cursor:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/keys = {
-"times": PoolRealArray( 0, 0.2, 0.4, 0.6 ),
-"transitions": PoolRealArray( 1, 1, 1, 1 ),
-"update": 1,
-"values": [ 0, 1, 2, 3 ]
-}
+[ext_resource path="res://Prefabs/PauseMenu.tscn" type="PackedScene" id=9]
 
 [sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 10, 104 )
@@ -35,6 +18,7 @@ extents = Vector2( 184, 8 )
 [node name="Controller" type="Node"]
 script = ExtResource( 1 )
 sound_oneshot_ref = ExtResource( 8 )
+pause_menu_ref = ExtResource( 9 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2
@@ -106,29 +90,6 @@ text = "Healed: 10"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="CanvasLayer3" type="CanvasLayer" parent="."]
-layer = 8
-
-[node name="Label" type="Label" parent="CanvasLayer3"]
-visible = false
-margin_right = 40.0
-margin_bottom = 14.0
-custom_fonts/font = ExtResource( 3 )
-text = "Press again to quit"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Cursor" type="Sprite" parent="CanvasLayer3"]
-texture = ExtResource( 7 )
-centered = false
-hframes = 4
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="CanvasLayer3"]
-autoplay = "Idle"
-playback_speed = 1.5
-anims/Idle = SubResource( 1 )
 
 [node name="TimerAfterLoad" type="Timer" parent="."]
 wait_time = 0.2

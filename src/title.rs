@@ -118,8 +118,9 @@ impl Title {
 		player_ref_2.show();
 		player_ref.map_mut(|player| { player.heal(10); }).unwrap();
 
-		let contr_ref = get_singleton!(owner, Node, Controller);
-		contr_ref.map_mut(|contr, owner| { contr.play_music(owner); }).unwrap();
-		contr_ref.into_script().map_mut(|contr| { contr.reset(); }).unwrap();
+		let contr_ref = get_singleton!(owner, Node, Controller).into_script();
+		get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.play_music(owner); }).unwrap();
+		contr_ref.map_mut(|contr| { contr.reset(); }).unwrap();
+		contr_ref.map_mut(|contr| { contr.set_in_game(true); }).unwrap();
 	}
 }

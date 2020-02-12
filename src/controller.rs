@@ -22,15 +22,17 @@ pub struct Controller {
 	enemies_healed: HashMap<GodotString, Vector2>,
 	fountains_purified: HashMap<GodotString, bool>,
 
+	in_game: bool,
 	speedrun_timer: bool,
 	timer: f64,
 
 	sound_oneshot_ref: Option<PackedScene>,
+	pause_menu_ref: Option<PackedScene>,
 
 	text_healed: Option<Label>,
 	healthbar: Option<TextureProgress>,
 	timer_text: Option<Label>,
-	cursor: Option<Sprite>,
+	//cursor: Option<Sprite>,
 
 	rand: RandomNumberGenerator
 }
@@ -45,15 +47,17 @@ impl Controller {
 			enemies_healed: HashMap::new(),
 			fountains_purified: HashMap::new(),
 
+			in_game: false,
 			speedrun_timer: false,
 			timer: 0.0,
 
 			sound_oneshot_ref: None,
+			pause_menu_ref: None,
 
 			text_healed: None,
 			healthbar: None,
 			timer_text: None,
-			cursor: None,
+		//	cursor: None,
 
 			rand: RandomNumberGenerator::new()
 		}
@@ -62,6 +66,10 @@ impl Controller {
 	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
 		builder.add_property::<Option<PackedScene>>("sound_oneshot_ref")
 		.with_setter(|this: &mut Self, _owner: Node,  v| this.sound_oneshot_ref = v)
+		.done();
+
+		builder.add_property::<Option<PackedScene>>("pause_menu_ref")
+		.with_setter(|this: &mut Self, _owner: Node,  v| this.pause_menu_ref = v)
 		.done();
 	}
 
@@ -75,7 +83,7 @@ impl Controller {
 		self.text_healed = get_node!(owner, Label, "CanvasLayer/Label");
 		self.timer_text = get_node!(owner, Label, "CanvasLayer2/TimerText");
 		self.healthbar = get_node!(owner, TextureProgress, "CanvasLayer/Health");
-		self.cursor = get_node!(owner, Sprite, "CanvasLayer3/Cursor");
+		//self.cursor = get_node!(owner, Sprite, "CanvasLayer3/Cursor");
 	}
 
 	#[export]
@@ -84,7 +92,7 @@ impl Controller {
 			self.timer += delta;
 		}
 
-		self.cursor.unwrap().set_position(owner.get_viewport().unwrap().get_mouse_position());
+		//self.cursor.unwrap().set_position(owner.get_viewport().unwrap().get_mouse_position());
 
 		self.timer_text.unwrap().set_text(GodotString::from(self.timer.to_string()));
 
@@ -96,6 +104,18 @@ impl Controller {
 		let inp = Input::godot_singleton();
 		if inp.is_action_just_pressed("sys_fullscreen".into()) {
 			OS::godot_singleton().set_window_fullscreen(!OS::godot_singleton().is_window_fullscreen());
+		}
+
+		if inp.is_action_just_pressed("sys_back".into()) && self.in_game && !owner.get_tree().unwrap().is_paused() {
+				let pm = self.pause_menu_ref.as_ref().unwrap().instance(0);
+				owner.get_tree().unwrap().get_root().unwrap().add_child(pm, false);
+				owner.get_tree().unwrap().set_pause(true);
+		}
+
+		if inp.is_action_just_pressed("debug".into()) {
+			for i in 0..5 {
+				self.add_fountain_purified_info(format!("{}", i).into());
+			}
 		}
 	}
 
@@ -157,6 +177,10 @@ impl Controller {
 
 	pub fn set_speedrun_timer(&mut self, value: bool) {
 		self.speedrun_timer = value;
+	}
+
+	pub fn set_in_game(&mut self, value: bool) {
+		self.in_game = value;
 	}
 
 	pub fn reset(&mut self) {

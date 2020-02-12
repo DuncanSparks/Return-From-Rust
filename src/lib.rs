@@ -19,6 +19,8 @@ mod room;
 mod demon_king;
 mod boss_bullet;
 mod game_over;
+mod pause_menu;
+mod cursor;
 
 fn init(handle: InitHandle) {
 	handle.add_class::<player::Player>();
@@ -35,6 +37,9 @@ fn init(handle: InitHandle) {
 	handle.add_class::<room::Room>();
 	handle.add_class::<demon_king::DemonKing>();
 	handle.add_class::<game_over::GameOver>();
+	handle.add_class::<pause_menu::PauseMenu>();
+	handle.add_class::<cursor::Cursor>();
+	handle.add_class::<boss_bullet::BossBullet>();
 }
 
 godot_gdnative_init!();

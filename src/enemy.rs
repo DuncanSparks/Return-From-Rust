@@ -218,8 +218,6 @@ impl Enemy {
 			self.velocity = Vector2::zero();
 			self.spr.unwrap().play("healed".into(), false);
 		}
-
-		owner.update();
 	}
 
 	#[export]
@@ -242,15 +240,6 @@ impl Enemy {
 		else {
 			get_node!(owner, AudioStreamPlayer, "SoundHit").unwrap().play(0.0);
 		}
-	}
-
-	#[export]
-	pub unsafe fn _draw(&mut self, mut owner: gd::KinematicBody2D) {
-		let ow = owner;
-		for i in 0..self.nav_path.len() {
-			owner.draw_circle(self.nav_path.get(i) - ow.get_position(), 3.0, Color{r: 1.0, g: 1.0, b: 1.0, a: 1.0});
-		}
-		
 	}
 
 	pub unsafe fn heal(&mut self, mut owner: KinematicBody2D, room_start: bool) {
@@ -394,10 +383,10 @@ impl Enemy {
 		let mut start_point = owner.get_global_position();
 		for _ in 0..self.nav_path.len() {
 			let target = self.nav_path.get(0);
-			godot_print!("{}", target);
 			let dist = ((target.x - start_point.x).powi(2) + (target.y - start_point.y).powi(2)).sqrt();
 			if distance <= dist && dist >= 0.0 {
-				let angle = (owner.get_global_position().angle_to(target) + Angle::degrees(90.0)).get();
+				let vec = (target - owner.get_global_position()).normalize();
+				let angle = -vec.x.atan2(vec.y) as f32 + 90.0f32.to_radians();
 				self.velocity = Vector2::new(angle.cos(), angle.sin());
 				break;
 			}

@@ -32,24 +32,11 @@ impl Bullet {
 
 	#[export]
 	pub unsafe fn _ready(&self, mut owner: RigidBody2D) {
-		/*let vel = Vector2::new(Bullet::SPEED, 0.0);
-		let theta = owner.get_global_rotation() as f32;
-		
-		let vel_rot = Vector2::new(vel.x * theta.cos() - vel.y * theta.sin(), vel.x * theta.sin() + vel.y * theta.cos());
-		owner.set_linear_velocity(vel_rot);
-		*/
-
-		//godot_print!("{}", owner.get_global_rotation());
-		//godot_print!("{}", owner.get_global_rotation().to_degrees());
 		let ang = Angle::radians(owner.get_global_rotation() as f32);
 		let ang_deg = ang.positive().to_degrees() - 90.0;
 		owner.set_linear_velocity(Vector2::new(Bullet::SPEED, 0.0).rotated(-Angle::radians(ang_deg.to_radians())));
-		//get_node!(owner, Sprite, "Sprite").unwrap().set_rotation(get_node!(owner, Sprite, "Sprite").unwrap().get_rotation() * -1.0);
-		//owner.set_linear_velocity(Vector2::new(Bullet::SPEED, 0.0).rotated(Angle::radians(owner.get_global_rotation() as f32)));
-
-		/*if rand_range!(owner, 0.0, 1.0) > 0.5 {
-			get_node!(owner, Sprite, "Sprite").unwrap().set_flip_v(true);
-		}*/
+		let spr_ang = get_node!(owner, Sprite, "Sprite").unwrap().get_global_rotation() as f64;
+		get_node!(owner, Sprite, "Sprite").unwrap().set_global_rotation(-spr_ang - 270.0f64.to_radians() as f64);
 	}
 
 	#[export]

@@ -68,7 +68,7 @@ impl Player {
 
 			health: 5,
 			iframes: false,
-			invincible: false,
+			invincible: true,
 
 			loading: false,
 			lock_movement: false,

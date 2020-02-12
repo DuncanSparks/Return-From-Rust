@@ -1,0 +1,151 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://Sprites/UI/NinePatch.png" type="Texture" id=1]
+[ext_resource path="res://Fonts/slkscr.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Audio/Title Click.ogg" type="AudioStream" id=3]
+[ext_resource path="res://Scripts/PauseMenu.gdns" type="Script" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 8
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxEmpty" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=4]
+
+[sub_resource type="StyleBoxEmpty" id=5]
+
+[sub_resource type="StyleBoxEmpty" id=6]
+
+[sub_resource type="Animation" id=9]
+tracks/0/type = "value"
+tracks/0/path = NodePath("CanvasLayer/Fade:color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 0, 0, 0, 0 ), Color( 0, 0, 0, 1 ) ]
+}
+
+[node name="PauseMenu" type="Node2D"]
+pause_mode = 2
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_vertical_guides_": [ 160.0 ]
+}
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 8
+
+[node name="NinePatchRect" type="NinePatchRect" parent="CanvasLayer"]
+margin_left = 136.0
+margin_top = 72.0
+margin_right = 184.0
+margin_bottom = 128.0
+texture = ExtResource( 1 )
+patch_margin_left = 2
+patch_margin_top = 2
+patch_margin_right = 2
+patch_margin_bottom = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Header" type="Label" parent="CanvasLayer/NinePatchRect"]
+margin_left = 4.0
+margin_top = 3.0
+margin_right = 44.0
+margin_bottom = 17.0
+custom_fonts/font = SubResource( 1 )
+text = "Paused"
+align = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonResume" type="Button" parent="CanvasLayer/NinePatchRect"]
+margin_left = 3.0
+margin_top = 20.0
+margin_right = 45.0
+margin_bottom = 29.0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0.470588, 0.470588, 0.470588, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+action_mode = 0
+text = "Resume"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonToTitle" type="Button" parent="CanvasLayer/NinePatchRect"]
+margin_left = 3.0
+margin_top = 32.0
+margin_right = 45.0
+margin_bottom = 41.0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0.470588, 0.470588, 0.470588, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+action_mode = 0
+text = "To Title"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ButtonExit" type="Button" parent="CanvasLayer/NinePatchRect"]
+margin_left = 3.0
+margin_top = 44.0
+margin_right = 45.0
+margin_bottom = 53.0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/disabled = SubResource( 5 )
+custom_styles/normal = SubResource( 6 )
+custom_fonts/font = SubResource( 1 )
+custom_colors/font_color = Color( 0.470588, 0.470588, 0.470588, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+action_mode = 0
+text = "Exit"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Fade" type="ColorRect" parent="CanvasLayer"]
+margin_right = 320.0
+margin_bottom = 184.0
+mouse_filter = 2
+color = Color( 0, 0, 0, 0 )
+__meta__ = {
+"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="SoundClick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+pitch_scale = 1.3
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+playback_speed = 0.5
+anims/Fadeout = SubResource( 9 )
+[connection signal="pressed" from="CanvasLayer/NinePatchRect/ButtonResume" to="." method="_on_ButtonResume_pressed"]
+[connection signal="pressed" from="CanvasLayer/NinePatchRect/ButtonToTitle" to="." method="_on_ButtonToTitle_pressed"]
+[connection signal="pressed" from="CanvasLayer/NinePatchRect/ButtonExit" to="." method="_on_ButtonExit_pressed"]
