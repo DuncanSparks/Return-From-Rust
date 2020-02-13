@@ -21,11 +21,11 @@ tracks/0/keys = {
 }
 
 [node name="Cursor" type="CanvasLayer"]
+pause_mode = 2
 layer = 10
 script = ExtResource( 2 )
 
 [node name="Cursor" type="Sprite" parent="."]
-pause_mode = 2
 texture = ExtResource( 1 )
 centered = false
 hframes = 4

@@ -5,6 +5,8 @@ use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot
 
 use crate::*;
 
+use controller::Controller;
+
 
 #[derive(gd::NativeClass)]
 #[inherit(gd::Node2D)]
@@ -27,6 +29,7 @@ impl GameOver {
 
 	#[export]
 	pub unsafe fn _on_Timer_timeout(&self, owner: Node2D) {
+		get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.set_in_game(false); }).unwrap();
 		owner.get_tree().unwrap().change_scene("res://Scenes/Title.tscn".into()).unwrap();
 	}
 
