@@ -48,6 +48,7 @@ pub struct Player {
 	lock_movement: bool,
 
 	bullet_available: bool,
+	click_lock: bool,
 
 	bullet_ref: Option<PackedScene>,
 
@@ -74,6 +75,7 @@ impl Player {
 			lock_movement: false,
 
 			bullet_available: true,
+			click_lock: false,
 
 			bullet_ref: None,
 
@@ -83,8 +85,9 @@ impl Player {
 	}
 
 	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
-		builder.add_property::<Option<PackedScene>>("bullet_ref")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = v)
+		builder.add_property::<PackedScene>("bullet_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref =  if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.bullet_ref.as_ref().unwrap().new_ref())
 		.done();
 	}
 
@@ -98,7 +101,7 @@ impl Player {
 
 	#[export]
 	pub unsafe fn _process(&mut self, mut owner: gd::KinematicBody2D, _delta: f64) {
-		let y = owner.get_position().y as i64;
+		let y = owner.get_position().y as i64 + 8;
 		owner.set_z_index(y);
 
 		let inp = Input::godot_singleton();
@@ -117,7 +120,7 @@ impl Player {
 			self.direction_management();
 			self.sprite_management();
 
-			if inp.is_action_just_pressed("attack".into()) && self.bullet_available {
+			if inp.is_action_just_pressed("attack".into()) && self.bullet_available && !self.click_lock {
 				self.throw_bullet(owner);
 				self.bullet_available = false;
 			}
@@ -153,15 +156,22 @@ impl Player {
 			self.iframes = false;
 		}
 	}
+
+	#[export]
+	pub unsafe fn unpause(&mut self, owner: KinematicBody2D) {
+		self.click_lock = true;
+		get_node!(owner, Timer, "TimerPause").unwrap().start(0.0);
+	}
+
+	#[export]
+	pub unsafe fn after_unpause(&mut self, _owner: KinematicBody2D) {
+		self.click_lock = false;
+	}
 }
 
 impl Player {
 
 	// =====================================================================
-
-	pub fn get_face(&self) -> Direction {
-		self.face.clone()
-	}
 
 	pub fn set_face(&mut self, value: Direction) {
 		self.face = value;
@@ -219,7 +229,7 @@ impl Player {
 	}
 
 	unsafe fn sprite_management(&mut self) {
-		let mut anim = GodotString::new();
+		let mut anim: GodotString;
 		match self.face {
 			Direction::Up => anim = "up".into(),
 			Direction::Down => anim = "down".into(),
@@ -236,7 +246,7 @@ impl Player {
 
 	unsafe fn throw_bullet(&mut self, owner: KinematicBody2D) {
 		let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
-		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_position(owner.get_position() + Vector2::new(0.0, 4.0));
+		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_position(owner.get_position() + Vector2::new(0.0, 8.0));
 
 		let vec = (owner.get_global_mouse_position() - owner.get_position()).normalize();
 		let angle = vec.x.atan2(vec.y) as f64;

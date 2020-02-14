@@ -34,6 +34,7 @@ impl Title {
 	pub unsafe fn _ready(&mut self, owner: Node2D) {
 		let sr_timer = get_singleton!(owner, Node, Controller).into_script().map(|contr| { contr.is_speedrun_timer_on()} ).unwrap();
 		get_node!(owner, Button, "ButtonSpeedrunTimer").unwrap().set_text(if sr_timer { "Speedrun Timer - On".into() } else { "Speedrun Timer - Off".into() });
+		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("Fadein".into(), -1.0, 1.0, false);
 	}
 
 	#[export]
@@ -115,6 +116,7 @@ impl Title {
 		get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.show_ui(owner, true); }).unwrap();
 		let mut player_ref_2 = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
 		player_ref_2.set_position(Vector2::new(160.0, 120.0));
+		player_ref.map_mut(|player| { player.set_face(player::Direction::Down); }).unwrap();
 		player_ref_2.show();
 		player_ref.map_mut(|player| { player.heal(10); }).unwrap();
 

@@ -56,24 +56,9 @@ animations = [ {
 "name": "up",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 27 ) ],
-"loop": true,
-"name": "healed",
-"speed": 4.0
-}, {
-"frames": [ ExtResource( 10 ), ExtResource( 12 ), ExtResource( 10 ), ExtResource( 3 ), ExtResource( 11 ), ExtResource( 13 ), ExtResource( 11 ), ExtResource( 3 ) ],
-"loop": true,
-"name": "up_walk",
-"speed": 10.0
-}, {
 "frames": [ ExtResource( 8 ), ExtResource( 1 ), ExtResource( 8 ), ExtResource( 6 ), ExtResource( 9 ), ExtResource( 7 ), ExtResource( 9 ), ExtResource( 6 ) ],
 "loop": true,
 "name": "down_walk",
-"speed": 10.0
-}, {
-"frames": [ ExtResource( 19 ), ExtResource( 5 ), ExtResource( 19 ), ExtResource( 21 ), ExtResource( 18 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 21 ) ],
-"loop": true,
-"name": "right_walk",
 "speed": 10.0
 }, {
 "frames": [ ExtResource( 6 ) ],
@@ -85,6 +70,21 @@ animations = [ {
 "loop": true,
 "name": "left_walk",
 "speed": 10.0
+}, {
+"frames": [ ExtResource( 10 ), ExtResource( 12 ), ExtResource( 10 ), ExtResource( 3 ), ExtResource( 11 ), ExtResource( 13 ), ExtResource( 11 ), ExtResource( 3 ) ],
+"loop": true,
+"name": "up_walk",
+"speed": 10.0
+}, {
+"frames": [ ExtResource( 19 ), ExtResource( 5 ), ExtResource( 19 ), ExtResource( 21 ), ExtResource( 18 ), ExtResource( 20 ), ExtResource( 18 ), ExtResource( 21 ) ],
+"loop": true,
+"name": "right_walk",
+"speed": 10.0
+}, {
+"frames": [ ExtResource( 26 ), ExtResource( 27 ), ExtResource( 28 ), ExtResource( 27 ) ],
+"loop": true,
+"name": "healed",
+"speed": 4.0
 } ]
 
 [sub_resource type="RectangleShape2D" id=3]
@@ -137,7 +137,7 @@ tracks/0/keys = {
 [node name="Enemy" type="KinematicBody2D" groups=[
 "Enemy",
 ]]
-collision_layer = 2
+collision_layer = 514
 collision_mask = 18
 script = ExtResource( 2 )
 __meta__ = {
@@ -205,7 +205,7 @@ volume_db = 6.0
 
 [node name="SoundHeal" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 25 )
-volume_db = 12.0
+volume_db = -2.0
 
 [node name="Timer" type="Timer" parent="."]
 

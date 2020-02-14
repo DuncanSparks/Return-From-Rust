@@ -15,11 +15,10 @@ use controller::Controller;
 #[user_data(gd::user_data::LocalCellData<DemonKing>)]
 #[register_with(Self::register_properties)]
 pub struct DemonKing {
-	sound_bullet: Option<AudioStream>,
-	sound_healed: Option<AudioStream>,
+	/*sound_healed: Option<AudioStream>,
 	sound_teleport: Option<AudioStream>,
 	sound_kick: Option<AudioStream>,
-	sound_heal: Option<AudioStream>,
+	sound_heal: Option<AudioStream>,*/
 
 	health: u16,
 	healed: bool,
@@ -45,11 +44,10 @@ pub struct DemonKing {
 impl DemonKing {
 	fn _init(_owner: gd::KinematicBody2D) -> DemonKing {
 		DemonKing {
-			sound_bullet: None,
-			sound_healed: None,
+			/*sound_healed: None,
 			sound_teleport: None,
 			sound_kick: None,
-			sound_heal: None,
+			sound_heal: None,*/
 
 			health: 15,
 			healed: false,
@@ -77,44 +75,54 @@ impl DemonKing {
 			args: &[]
 		});
 
-		builder.add_property::<Option<AudioStream>>("sound_bullet")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_bullet = v)
+		/*builder.add_property::<AudioStream>("sound_healed")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_healed = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.sound_healed.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<AudioStream>>("sound_healed")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_healed = v)
+		builder.add_property::<AudioStream>("sound_teleport")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_teleport = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.sound_teleport.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<AudioStream>>("sound_teleport")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_teleport = v)
+		builder.add_property::<AudioStream>("sound_kick")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_kick = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.sound_kick.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<AudioStream>>("sound_kick")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_kick = v)
+		builder.add_property::<AudioStream>("sound_heal")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_heal = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.sound_heal.as_ref().unwrap().new_ref())
+		.done();*/
+
+		builder.add_property::<PackedScene>("bullet_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.bullet_ref.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<AudioStream>>("sound_heal")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.sound_heal = v)
+		builder.add_property::<PackedScene>("enemy_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.enemy_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.enemy_ref.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("bullet_ref")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = v)
+		builder.add_property::<PackedScene>("ball_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ball_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.ball_ref.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("enemy_ref")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.enemy_ref = v)
+		builder.add_property::<PackedScene>("parts_healed")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_healed = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.parts_healed.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("ball_ref")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ball_ref = v)
+		builder.add_property::<PackedScene>("parts_teleport")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_teleport = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.parts_teleport.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("parts_healed")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_healed = v)
-		.done();
-
-		builder.add_property::<Option<PackedScene>>("parts_teleport")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_teleport = v)
+		builder.add_property::<NodePath>("navigator")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D, v| this.navigator = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.navigator.new_ref())
 		.done();
 	}
 
@@ -145,7 +153,8 @@ impl DemonKing {
 
 		self.health -= 1;
 		if self.health <= 0 {
-			get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_healed.clone(), 6.0, 1.0); }).unwrap();
+			//get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_healed.as_ref().unwrap().new_ref(), 6.0, 1.0); }).unwrap();
+			get_node!(owner, AudioStreamPlayer, "SoundHealed").unwrap().play(0.0);
 			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.stop_timer(); }).unwrap();
 			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|pl| { pl.set_invincible(true); }).unwrap();
 			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|pl| { pl.set_lock_movement(true); }).unwrap();
@@ -163,7 +172,8 @@ impl DemonKing {
 			owner.get_tree().unwrap().get_current_scene().unwrap().get_node("TimerEnd2".into()).unwrap().cast::<Timer>().unwrap().start(0.0);
 		}
 		else {
-			get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_heal.clone(), 6.0, 1.0); }).unwrap();
+			//get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_heal.as_ref().unwrap().new_ref(), 6.0, 1.0); }).unwrap();
+			get_node!(owner, AudioStreamPlayer, "SoundHit").unwrap().play(0.0);
 		}
 	}
 
@@ -178,7 +188,8 @@ impl DemonKing {
 			return;
 		}
 		else if num == 1 {
-			get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_teleport.clone(), 4.0, 1.0); }).unwrap();
+			//get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_teleport.as_ref().unwrap().new_ref(), 4.0, 1.0); }).unwrap();
+			get_node!(owner, AudioStreamPlayer, "SoundTeleport2").unwrap().play(0.0);
 			for _ in 0..rand_range!(owner, 1.0, 2.0).round() as u8 {
 				let pos = Vector2::new(rand_range!(owner, 30.0, 290.0) as f32, rand_range!(owner, 30.0, 150.0) as f32);
 
@@ -198,7 +209,8 @@ impl DemonKing {
 			}
 		}
 		else {
-			get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_kick.clone(), 0.0, 1.0); }).unwrap();
+			//get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_kick.as_ref().unwrap().new_ref(), 0.0, 1.0); }).unwrap();
+			get_node!(owner, AudioStreamPlayer, "SoundKick").unwrap().play(0.0);
 			let inst = self.ball_ref.as_ref().unwrap().instance(0);
 			let mut inst_r = inst.unwrap().cast::<RigidBody2D>().unwrap();
 			inst_r.set_position(owner.get_position());
@@ -217,7 +229,8 @@ impl DemonKing {
 
 	#[export]
 	pub unsafe fn tele_out(&self, owner: KinematicBody2D) {
-		get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_teleport.clone(), 4.0, 1.0); }).unwrap();
+		//get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_teleport.as_ref().unwrap().new_ref(), 4.0, 1.0); }).unwrap();
+		get_node!(owner, AudioStreamPlayer, "SoundTeleport").unwrap().play(0.0);
 
 		let parts = self.parts_teleport.as_ref().unwrap().instance(0);
 		let mut parts_ref = parts.unwrap().cast::<Particles2D>().unwrap();
@@ -233,7 +246,8 @@ impl DemonKing {
 
 	#[export]
 	pub unsafe fn tele_in(&self, mut owner: KinematicBody2D) {
-		get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_teleport.clone(), 4.0, 1.0); }).unwrap();
+		//get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_teleport.as_ref().unwrap().new_ref(), 4.0, 1.0); }).unwrap();
+		get_node!(owner, AudioStreamPlayer, "SoundTeleport").unwrap().play(0.0);
 
 		let ow = owner;
 		owner.set_position(Vector2::new(rand_range!(ow, 52.0, 268.0) as f32, rand_range!(ow, 52.0, 140.0) as f32));
@@ -252,7 +266,7 @@ impl DemonKing {
 
 	#[export]
 	pub unsafe fn fire_bullet(&mut self, owner: KinematicBody2D) {
-		get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_bullet.clone(), 6.0, 1.0); }).unwrap();
+		//get_singleton!(owner, Node, Controller).map(|contr, owner| { contr.play_sound_oneshot(owner, self.sound_bullet.as_ref().unwrap().new_ref(), 6.0, 1.0); }).unwrap();
 		let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
 		let mut bullet_r = bullet.unwrap().cast::<RigidBody2D>().unwrap();
 		bullet_r.set_position(owner.get_position());
@@ -279,5 +293,9 @@ impl DemonKing {
 	#[export]
 	pub unsafe fn end_game(&self, owner: KinematicBody2D) {
 		owner.get_tree().unwrap().quit();
+	}
+
+	pub fn is_healed(&self) -> bool {
+		self.healed
 	}
 }

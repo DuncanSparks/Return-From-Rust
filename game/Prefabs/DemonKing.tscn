@@ -1,10 +1,9 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Scripts/DemonKing.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/Enemies/Boss.png" type="Texture" id=2]
 [ext_resource path="res://Audio/Hit.ogg" type="AudioStream" id=3]
 [ext_resource path="res://Audio/Heal.ogg" type="AudioStream" id=4]
-[ext_resource path="res://Audio/Shoot.ogg" type="AudioStream" id=5]
 [ext_resource path="res://Sprites/Enemies/Boss_healed.png" type="Texture" id=6]
 [ext_resource path="res://Audio/Teleport.ogg" type="AudioStream" id=7]
 [ext_resource path="res://Audio/Kick.ogg" type="AudioStream" id=8]
@@ -99,20 +98,15 @@ tracks/0/keys = {
 }
 
 [node name="DemonKing" type="KinematicBody2D" groups=[
-"Enemy",
+"EnemyBoss",
 ]]
 position = Vector2( 160, 32 )
-collision_layer = 3
+collision_layer = 515
 collision_mask = 3
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
-sound_bullet = ExtResource( 5 )
-sound_healed = ExtResource( 4 )
-sound_teleport = ExtResource( 7 )
-sound_kick = ExtResource( 8 )
-sound_heal = ExtResource( 3 )
 bullet_ref = ExtResource( 9 )
 enemy_ref = ExtResource( 12 )
 ball_ref = ExtResource( 11 )
@@ -141,6 +135,24 @@ one_shot = true
 [node name="TimerBullet" type="Timer" parent="."]
 wait_time = 0.1
 one_shot = true
+
+[node name="SoundKick" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 8 )
+
+[node name="SoundTeleport" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+volume_db = -4.0
+
+[node name="SoundTeleport2" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 7 )
+volume_db = -4.0
+
+[node name="SoundHit" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+pitch_scale = 0.85
+
+[node name="SoundHealed" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 autoplay = "Idle"

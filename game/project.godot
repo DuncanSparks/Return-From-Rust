@@ -23,6 +23,10 @@ boot_splash/bg_color=Color( 0, 0, 0, 1 )
 config/icon="res://RfD_Icon.png"
 config/windows_native_icon="res://favicon.ico"
 
+[audio]
+
+mix_rate=48000
+
 [autoload]
 
 Player="*res://Prefabs/Globals/Player.tscn"
@@ -164,4 +168,5 @@ debug={
 
 [rendering]
 
+quality/2d/use_pixel_snap=true
 environment/default_environment="res://default_env.tres"

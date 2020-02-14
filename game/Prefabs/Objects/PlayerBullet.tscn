@@ -60,7 +60,7 @@ tracks/0/keys = {
 [node name="PlayerBullet" type="RigidBody2D" groups=[
 "PlayerBullet",
 ]]
-collision_layer = 2
+collision_layer = 514
 collision_mask = 32
 mass = 0.00102041
 physics_material_override = SubResource( 1 )
@@ -106,7 +106,7 @@ anims/Idle = SubResource( 8 )
 
 [node name="SoundPickUp" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
-volume_db = -10.0
+volume_db = -14.0
 
 [node name="TimerPickUp" type="Timer" parent="."]
 wait_time = 0.5

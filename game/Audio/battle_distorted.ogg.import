@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/battle_distorted.ogg-7a749b02a47efe55dd2e5f74c9e4ddfa.oggstr"
+
+[deps]
+
+source_file="res://Audio/battle_distorted.ogg"
+dest_files=[ "res://.import/battle_distorted.ogg-7a749b02a47efe55dd2e5f74c9e4ddfa.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

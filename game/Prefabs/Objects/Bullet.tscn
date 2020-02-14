@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scripts/Bullet.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/Objects/Fireball.png" type="Texture" id=2]
+[ext_resource path="res://Audio/Shoot.ogg" type="AudioStream" id=3]
 
 [sub_resource type="CircleShape2D" id=1]
 radius = 5.0
@@ -49,4 +50,8 @@ hframes = 3
 autoplay = "Idle"
 playback_speed = 1.5
 anims/Idle = SubResource( 2 )
+
+[node name="SoundShoot" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+autoplay = true
 [connection signal="body_entered" from="." to="." method="collide"]

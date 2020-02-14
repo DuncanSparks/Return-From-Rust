@@ -1,19 +1,22 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://Scripts/Controller.gdns" type="Script" id=1]
 [ext_resource path="res://Sprites/UI/NinePatch.png" type="Texture" id=2]
 [ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Sprites/UI/Healthbar_front.png" type="Texture" id=4]
-[ext_resource path="res://Audio/battle_distorted.wav" type="AudioStream" id=5]
+[ext_resource path="res://Audio/battle_distorted.ogg" type="AudioStream" id=5]
 [ext_resource path="res://Sprites/UI/Healthbar_back.png" type="Texture" id=6]
 [ext_resource path="res://Prefabs/SoundOneShot.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Prefabs/PauseMenu.tscn" type="PackedScene" id=9]
 
-[sub_resource type="RectangleShape2D" id=2]
+[sub_resource type="RectangleShape2D" id=1]
 extents = Vector2( 10, 104 )
 
-[sub_resource type="RectangleShape2D" id=3]
+[sub_resource type="RectangleShape2D" id=2]
 extents = Vector2( 184, 8 )
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 34, 17 )
 
 [node name="Controller" type="Node"]
 script = ExtResource( 1 )
@@ -23,7 +26,14 @@ pause_menu_ref = ExtResource( 9 )
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="NinePatchRect" type="NinePatchRect" parent="CanvasLayer"]
+[node name="Control" type="Control" parent="CanvasLayer"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect" type="NinePatchRect" parent="CanvasLayer/Control"]
 margin_left = 5.0
 margin_top = 144.0
 margin_right = 70.0
@@ -37,10 +47,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="CanvasLayer"]
+[node name="Label" type="Label" parent="CanvasLayer/Control"]
 margin_left = 8.0
 margin_top = 146.0
-margin_right = 48.0
+margin_right = 67.0
 margin_bottom = 160.0
 custom_fonts/font = ExtResource( 3 )
 text = "Healed: 10"
@@ -48,7 +58,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Health" type="TextureProgress" parent="CanvasLayer"]
+[node name="Health" type="TextureProgress" parent="CanvasLayer/Control"]
 margin_left = 13.0
 margin_top = 159.0
 margin_right = 62.0
@@ -64,7 +74,14 @@ __meta__ = {
 [node name="CanvasLayer2" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="NinePatchRect2" type="NinePatchRect" parent="CanvasLayer2"]
+[node name="Control" type="Control" parent="CanvasLayer2"]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="CanvasLayer2/Control"]
 visible = false
 margin_left = 245.0
 margin_top = 144.0
@@ -79,7 +96,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TimerText" type="Label" parent="CanvasLayer2"]
+[node name="TimerText" type="Label" parent="CanvasLayer2/Control"]
 visible = false
 margin_left = 250.0
 margin_top = 154.0
@@ -100,27 +117,55 @@ stream = ExtResource( 5 )
 volume_db = -12.0
 
 [node name="BallWall" type="StaticBody2D" parent="."]
-collision_layer = 0
+collision_layer = 32
 collision_mask = 32
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( -10, 88 )
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( 330, 88 )
-shape = SubResource( 2 )
+shape = SubResource( 1 )
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( 160, 200 )
-shape = SubResource( 3 )
+shape = SubResource( 2 )
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="BallWall"]
 position = Vector2( 160, -8 )
-shape = SubResource( 3 )
+shape = SubResource( 2 )
 
 [node name="TimerQuit" type="Timer" parent="."]
 wait_time = 2.0
 one_shot = true
+
+[node name="AreaUI" type="Area2D" parent="."]
+position = Vector2( 37, 160 )
+collision_layer = 512
+collision_mask = 512
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaUI"]
+position = Vector2( 1, -1 )
+shape = SubResource( 3 )
+
+[node name="AreaUI2" type="Area2D" parent="."]
+position = Vector2( 276, 160 )
+collision_layer = 512
+collision_mask = 512
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AreaUI2"]
+position = Vector2( 1, -1 )
+shape = SubResource( 3 )
 [connection signal="timeout" from="TimerAfterLoad" to="." method="after_load_2"]
 [connection signal="timeout" from="TimerQuit" to="." method="_on_TimerQuit_timeout"]
+[connection signal="body_entered" from="AreaUI" to="." method="_on_AreaUI_body_entered"]
+[connection signal="body_exited" from="AreaUI" to="." method="_on_AreaUI_body_exited"]
+[connection signal="body_entered" from="AreaUI2" to="." method="_on_AreaUI2_body_entered"]
+[connection signal="body_exited" from="AreaUI2" to="." method="_on_AreaUI2_body_exited"]

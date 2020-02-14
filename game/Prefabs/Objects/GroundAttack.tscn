@@ -92,11 +92,12 @@ shape = SubResource( 2 )
 
 [node name="SoundWindup" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 4 )
+volume_db = -8.0
 autoplay = true
 
 [node name="SoundFire" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
-volume_db = 8.0
+volume_db = 4.0
 [connection signal="body_entered" from="." to="." method="_on_GroundAttack_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_GroundAttack_body_exited"]
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

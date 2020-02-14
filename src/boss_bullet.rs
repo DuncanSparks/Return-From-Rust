@@ -37,6 +37,7 @@ impl BossBullet {
 		builder.add_property::<bool>("stopped")
 		.with_default(false)
 		.with_setter(|this: &mut Self, _owner: RigidBody2D,  v| this.stopped = v)
+		.with_getter(|this: &Self, _owner: RigidBody2D| this.stopped)
 		.done();
 
 		/*builder.add_signal(init::Signal {

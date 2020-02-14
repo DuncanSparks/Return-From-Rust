@@ -1,7 +1,7 @@
 [gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://Sprites/UI/Title.png" type="Texture" id=1]
-[ext_resource path="res://Audio/title_pure.wav" type="AudioStream" id=2]
+[ext_resource path="res://Audio/title_pure.ogg" type="AudioStream" id=2]
 [ext_resource path="res://Fonts/FontFancy.tres" type="DynamicFont" id=3]
 [ext_resource path="res://Scripts/Title.gdns" type="Script" id=4]
 [ext_resource path="res://Audio/Title Click.ogg" type="AudioStream" id=5]
@@ -121,6 +121,18 @@ tracks/5/keys = {
 "update": 0,
 "values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
 }
+tracks/6/type = "value"
+tracks/6/path = NodePath("Credits4:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 0 ), Color( 1, 1, 1, 1 ) ]
+}
 
 [sub_resource type="Animation" id=10]
 tracks/0/type = "value"
@@ -216,6 +228,18 @@ tracks/5/loop_wrap = true
 tracks/5/imported = false
 tracks/5/enabled = true
 tracks/5/keys = {
+"times": PoolRealArray( 0, 1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Color( 1, 1, 1, 1 ), Color( 1, 1, 1, 0 ) ]
+}
+tracks/6/type = "value"
+tracks/6/path = NodePath("Credits4:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/keys = {
 "times": PoolRealArray( 0, 1 ),
 "transitions": PoolRealArray( 1, 1 ),
 "update": 0,
@@ -368,7 +392,6 @@ __meta__ = {
 }
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-autoplay = "Fadein"
 playback_speed = 0.5
 anims/Fadein = SubResource( 8 )
 "anims/Fadein Credits" = SubResource( 9 )
@@ -408,9 +431,9 @@ __meta__ = {
 
 [node name="Credits3" type="Label" parent="."]
 modulate = Color( 1, 1, 1, 0 )
-margin_left = 80.0
+margin_left = 4.0
 margin_top = 112.0
-margin_right = 241.0
+margin_right = 179.0
 margin_bottom = 166.0
 custom_fonts/font = SubResource( 14 )
 text = "Ken Zhou
@@ -418,7 +441,21 @@ Production, Music,
 Design, Programming, Art"
 align = 1
 __meta__ = {
-"_edit_lock_": true,
+"_edit_use_anchors_": false
+}
+
+[node name="Credits4" type="Label" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_left = 160.0
+margin_top = 112.0
+margin_right = 335.0
+margin_bottom = 166.0
+custom_fonts/font = SubResource( 14 )
+text = "Kat Witten
+Assistance with
+Rust port"
+align = 1
+__meta__ = {
 "_edit_use_anchors_": false
 }
 

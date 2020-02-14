@@ -10,6 +10,8 @@ use fountain::Fountain;
 
 use crate::*;
 
+use demon_king::DemonKing;
+
 
 #[derive(gd::NativeClass)]
 #[inherit(gd::RigidBody2D)]
@@ -39,6 +41,7 @@ impl PlayerBullet {
 		builder.add_property::<bool>("stopped")
 		.with_default(false)
 		.with_setter(|this: &mut Self, _owner: RigidBody2D,  v| this.stopped = v)
+		.with_getter(|this: &Self, _owner: RigidBody2D| this.stopped)
 		.done();
 
 		builder.add_signal(init::Signal {
@@ -103,6 +106,14 @@ impl PlayerBullet {
 				let enemy_ref = get_instance_ref!(Enemy, body, KinematicBody2D);
 				if !enemy_ref.into_script().map(|enemy| { enemy.is_healed() }).unwrap() {
 					let enemy_ref2 = get_instance_ref!(Enemy, body, KinematicBody2D);
+					enemy_ref2.map_mut(|enemy, owner| { enemy.hit(owner); }).unwrap();
+				}
+			}
+			
+			if body.is_in_group("EnemyBoss".into()) {
+				let enemy_ref = get_instance_ref!(DemonKing, body, KinematicBody2D);
+				if !enemy_ref.into_script().map(|enemy| { enemy.is_healed() }).unwrap() {
+					let enemy_ref2 = get_instance_ref!(DemonKing, body, KinematicBody2D);
 					enemy_ref2.map_mut(|enemy, owner| { enemy.hit(owner); }).unwrap();
 				}
 			}

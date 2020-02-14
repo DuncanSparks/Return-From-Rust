@@ -1,12 +1,11 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://Resources/TileMap.tres" type="TileSet" id=1]
 [ext_resource path="res://Prefabs/DemonKing.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Audio/boss.wav" type="AudioStream" id=3]
+[ext_resource path="res://Audio/boss.ogg" type="AudioStream" id=3]
 [ext_resource path="res://Prefabs/Objects/WorldText.tscn" type="PackedScene" id=4]
 [ext_resource path="res://Scripts/Room.gdns" type="Script" id=5]
 [ext_resource path="res://Fonts/FontMain.tres" type="DynamicFont" id=6]
-[ext_resource path="res://Audio/Heal.ogg" type="AudioStream" id=8]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 296, 24, 296, 168, 24, 168, 24, 24 )
@@ -58,7 +57,7 @@ __meta__ = {
 }
 
 [node name="DemonKing" parent="." instance=ExtResource( 2 )]
-sound_heal = ExtResource( 8 )
+navigator = NodePath("../Navigation2D")
 
 [node name="MusicBoss" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 3 )
@@ -85,6 +84,7 @@ margin_bottom = 192.0
 mouse_filter = 2
 color = Color( 1, 1, 1, 0 )
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 

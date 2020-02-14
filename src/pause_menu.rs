@@ -6,6 +6,7 @@ use gd::{methods, godot_wrap_method, godot_wrap_method_inner, godot_error, godot
 use crate::*;
 
 use controller::Controller;
+use player::Player;
 
 
 #[derive(gd::NativeClass)]
@@ -38,6 +39,7 @@ impl PauseMenu {
 	#[export]
 	pub unsafe fn _on_ButtonResume_pressed(&mut self, mut owner: Node2D) {
 		get_node!(owner, AudioStreamPlayer, "SoundClick").unwrap().play(0.0);
+		get_singleton!(owner, KinematicBody2D, Player).map_mut(|player, owner| { player.unpause(owner); }).unwrap();
 		owner.get_tree().unwrap().set_pause(false);
 		owner.queue_free();
 	}
@@ -65,7 +67,16 @@ impl PauseMenu {
 			}
 			else {
 				get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.set_in_game(false); }).unwrap();
+
+				let player_ref = get_singleton!(owner, KinematicBody2D, Player).into_script();
+				let mut player_ref_2 = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
+				player_ref_2.hide();
+				player_ref.map_mut(|player| { player.set_lock_movement(true); }).unwrap();
+				get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.show_ui(owner, false); }).unwrap();
+				get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.stop_music(owner); }).unwrap();
+
 				owner.get_tree().unwrap().change_scene("res://Scenes/Title.tscn".into()).unwrap();
+				owner.get_tree().unwrap().set_pause(false);
 				owner.queue_free();
 			}
 		}

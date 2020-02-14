@@ -33,12 +33,14 @@ impl LoadingZone {
 		builder.add_property::<GodotString>("target_scene")
 		.with_default(GodotString::new())
 		.with_setter(|this: &mut Self, _owner: Area2D,  v| this.target_scene = v)
+		.with_getter(|this: &Self, _owner: Area2D| this.target_scene.new_ref())
 		.with_hint(property::StringHint::File(property::EnumHint::new(vec!["*.tscn".into()])))
 		.done();
 
 		builder.add_property::<u8>("direction")
 		.with_default(0)
 		.with_setter(|this: &mut Self, _owner: Area2D,  v| this.direction = v)
+		.with_getter(|this: &Self, _owner: Area2D| this.direction)
 		.with_hint(property::IntHint::Enum(property::EnumHint::new(vec!["Up".into(), "Down".into(), "Left".into(), "Right".into()])))
 		.done();
 	}

@@ -30,6 +30,7 @@ impl WorldText {
 		.with_default(GodotString::new())
 		.with_hint(property::StringHint::Multiline)
 		.with_setter(|this: &mut Self, _owner: RichTextLabel,  v| this.text_to_display = v)
+		.with_getter(|this: &Self, _owner: RichTextLabel| this.text_to_display.new_ref())
 		.done();
 	}
 

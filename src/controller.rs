@@ -32,7 +32,11 @@ pub struct Controller {
 	text_healed: Option<Label>,
 	healthbar: Option<TextureProgress>,
 	timer_text: Option<Label>,
-	//cursor: Option<Sprite>,
+
+	ui_1: Option<Control>,
+	ui_alpha_target_1: f32,
+	ui_2: Option<Control>,
+	ui_alpha_target_2: f32,
 
 	rand: RandomNumberGenerator
 }
@@ -57,19 +61,25 @@ impl Controller {
 			text_healed: None,
 			healthbar: None,
 			timer_text: None,
-		//	cursor: None,
+
+			ui_1: None,
+			ui_alpha_target_1: 1.0,
+			ui_2: None,
+			ui_alpha_target_2: 1.0,
 
 			rand: RandomNumberGenerator::new()
 		}
 	}
 
 	fn register_properties(builder: &gd::init::ClassBuilder<Self>) {
-		builder.add_property::<Option<PackedScene>>("sound_oneshot_ref")
-		.with_setter(|this: &mut Self, _owner: Node,  v| this.sound_oneshot_ref = v)
+		builder.add_property::<PackedScene>("sound_oneshot_ref")
+		.with_setter(|this: &mut Self, _owner: Node,  v| this.sound_oneshot_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: Node| this.sound_oneshot_ref.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("pause_menu_ref")
-		.with_setter(|this: &mut Self, _owner: Node,  v| this.pause_menu_ref = v)
+		builder.add_property::<PackedScene>("pause_menu_ref")
+		.with_setter(|this: &mut Self, _owner: Node,  v| this.pause_menu_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: Node| this.pause_menu_ref.as_ref().unwrap().new_ref())
 		.done();
 	}
 
@@ -80,10 +90,11 @@ impl Controller {
 
 		Input::godot_singleton().set_mouse_mode(InputMouseMode::ModeHidden as i64);
 
-		self.text_healed = get_node!(owner, Label, "CanvasLayer/Label");
-		self.timer_text = get_node!(owner, Label, "CanvasLayer2/TimerText");
-		self.healthbar = get_node!(owner, TextureProgress, "CanvasLayer/Health");
-		//self.cursor = get_node!(owner, Sprite, "CanvasLayer3/Cursor");
+		self.text_healed = get_node!(owner, Label, "CanvasLayer/Control/Label");
+		self.timer_text = get_node!(owner, Label, "CanvasLayer2/Control/TimerText");
+		self.healthbar = get_node!(owner, TextureProgress, "CanvasLayer/Control/Health");
+		self.ui_1 = get_node!(owner, Control, "CanvasLayer/Control");
+		self.ui_2 = get_node!(owner, Control, "CanvasLayer2/Control");
 	}
 
 	#[export]
@@ -92,12 +103,13 @@ impl Controller {
 			self.timer += delta;
 		}
 
-		//self.cursor.unwrap().set_position(owner.get_viewport().unwrap().get_mouse_position());
-
-		self.timer_text.unwrap().set_text(GodotString::from(self.timer.to_string()));
+		self.timer_text.unwrap().set_text(GodotString::from(format!("{:02}:{:.03}", self.timer.floor() as i64 / 60, self.timer % 60.0)));
 
 		self.text_healed.unwrap().set_text(format!("Healed: {}", self.num_enemies_healed).into());
-		
+
+		self.ui_1.unwrap().set_modulate(Color{r: 1.0, g: 1.0, b: 1.0, a: self.ui_alpha_target_1});
+		self.ui_2.unwrap().set_modulate(Color{r: 1.0, g: 1.0, b: 1.0, a: self.ui_alpha_target_2});
+
 		let player_hp = get_singleton!(owner, KinematicBody2D, Player).into_script().map(|pl| { pl.get_health() }).unwrap();
 		self.healthbar.unwrap().set_value(player_hp as f64);
 
@@ -122,12 +134,12 @@ impl Controller {
 	// =====================================================================
 
 	pub unsafe fn show_ui(&mut self, owner: Node, show: bool) {
-		for child in get_node!(owner, CanvasLayer, "CanvasLayer").unwrap().get_children().iter_mut() {
+		for child in get_node!(owner, Control, "CanvasLayer/Control").unwrap().get_children().iter_mut() {
 			child.try_to_object::<CanvasItem>().unwrap().set_visible(show);
 		}
 
 		if self.speedrun_timer {
-			for child in get_node!(owner, CanvasLayer, "CanvasLayer2").unwrap().get_children().iter_mut() {
+			for child in get_node!(owner, Control, "CanvasLayer2/Control").unwrap().get_children().iter_mut() {
 				child.try_to_object::<CanvasItem>().unwrap().set_visible(show);
 			}
 		}
@@ -145,16 +157,6 @@ impl Controller {
 		get_node!(owner, AudioStreamPlayer, "MusicDistorted").unwrap().stop();
 	}
 
-	pub unsafe fn play_sound_oneshot(&self, owner: Node, sound: Option<AudioStream>, volume: f64, pitch: f64) {
-		let sb = self.sound_oneshot_ref.as_ref().unwrap().instance(0);
-		let mut sb_ref = sb.unwrap().cast::<AudioStreamPlayer>().unwrap();
-		sb_ref.set_stream(sound);
-		sb_ref.set_volume_db(volume);
-		sb_ref.set_pitch_scale(pitch);
-		owner.get_tree().unwrap().get_root().unwrap().add_child(sb, false);
-		sb_ref.play(0.0);
-	}
-
 	pub unsafe fn after_load(&mut self, owner: Node) {
 		get_node!(owner, Timer, "TimerAfterLoad").unwrap().start(0.0);
 	}
@@ -165,6 +167,34 @@ impl Controller {
 		player_ref.map_mut(|player| {
 			player.set_loading(false);
 		}).unwrap();
+	}
+
+	#[export]
+	pub unsafe fn _on_AreaUI_body_entered(&mut self, _owner: Node, body: Node) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+			self.ui_alpha_target_1 = 0.2;
+		}
+	}
+
+	#[export]
+	pub unsafe fn _on_AreaUI_body_exited(&mut self, _owner: Node, body: Node) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+			self.ui_alpha_target_1 = 1.0;
+		}
+	}
+
+	#[export]
+	pub unsafe fn _on_AreaUI2_body_entered(&mut self, _owner: Node, body: Node) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+			self.ui_alpha_target_2 = 0.2;
+		}
+	}
+
+	#[export]
+	pub unsafe fn _on_AreaUI2_body_exited(&mut self, _owner: Node, body: Node) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+			self.ui_alpha_target_2 = 1.0;
+		}
 	}
 }
 

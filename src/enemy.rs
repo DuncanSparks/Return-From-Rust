@@ -97,57 +97,68 @@ impl Enemy {
 			args: &[]
 		});
 
-		builder.add_property::<Option<PackedScene>>("bullet_ref")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.bullet_ref = v)
+		builder.add_property("bullet_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v: PackedScene| this.bullet_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.bullet_ref.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("ground_attack_ref")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ground_attack_ref = v)
+		builder.add_property("ground_attack_ref")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v: PackedScene| this.ground_attack_ref = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.ground_attack_ref.as_ref().unwrap().new_ref())
 		.done();
 
-		builder.add_property::<Option<PackedScene>>("parts_healed")
-		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.parts_healed = v)
+		builder.add_property("parts_healed")
+		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v: PackedScene| this.parts_healed = if v.to_variant().is_nil() { None } else { Some(v) })
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.parts_healed.as_ref().unwrap().new_ref())
 		.done();
 
 		builder.add_property::<f32>("speed")
 		.with_default(25.0)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.speed = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.speed)
 		.done();
 
 		builder.add_property::<u16>("health")
 		.with_default(1)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.health = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.health)
 		.done();
 
 		builder.add_property::<bool>("follow")
 		.with_default(true)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.follow = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.follow)
 		.done();
 
 		builder.add_property::<bool>("shoot")
 		.with_default(true)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.shoot = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.shoot)
 		.done();
 
 		builder.add_property::<bool>("fast_fire")
 		.with_default(false)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.fast_fire = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.fast_fire)
 		.done();
 
 		builder.add_property::<bool>("ground_attack")
 		.with_default(false)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.ground_attack = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.ground_attack)
 		.done();
 
 		builder.add_property::<GodotString>("healed_text")
 		.with_default(GodotString::new())
 		.with_hint(property::StringHint::Multiline)
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.healed_text = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.healed_text.new_ref())
 		.done();
 
 		builder.add_property::<NodePath>("navigator")
 		.with_default(NodePath::new(&GodotString::new()))
 		.with_setter(|this: &mut Self, _owner: KinematicBody2D,  v| this.navigator = v)
+		.with_getter(|this: &Self, _owner: KinematicBody2D| this.navigator.new_ref())
 		.done();
 	}
 
@@ -225,7 +236,6 @@ impl Enemy {
 		move_and_slide_default!(owner, self.velocity * self.speed);
 	}
 
-	//#[export]
 	pub unsafe fn hit(&mut self, owner: KinematicBody2D) {
 		let parts = self.parts_healed.as_ref().unwrap().instance(0);
 		let mut parts_ref = parts.unwrap().cast::<Particles2D>().unwrap();
@@ -246,7 +256,7 @@ impl Enemy {
 		get_node!(owner, Particles2D, "PartsDust").unwrap().set_emitting(false);
 		self.healed = true;
 		owner.set_collision_mask_bit(4, false);
-		get_node!(owner, CollisionShape2D, "CollisionShape2D").unwrap().call_deferred("set_disabled".into(), &[false.to_variant()]);
+		get_node!(owner, CollisionShape2D, "CollisionShape2D").unwrap().call_deferred("set_disabled".into(), &[true.to_variant()]);
 
 		if !room_start {
 			get_node!(owner, AudioStreamPlayer, "SoundHeal").unwrap().play(0.0);
@@ -288,7 +298,7 @@ impl Enemy {
 	#[export]
 	pub unsafe fn _on_TimerShoot_timeout(&self, owner: KinematicBody2D) {
 		if !self.healed {
-			get_node!(owner, AudioStreamPlayer, "SoundShoot").unwrap().play(0.0);
+			//get_node!(owner, AudioStreamPlayer, "SoundShoot").unwrap().play(0.0);
 			let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
 			let mut bullet_r = bullet.unwrap().cast::<RigidBody2D>().unwrap();
 			bullet_r.set_position(owner.get_position());
@@ -364,7 +374,7 @@ impl Enemy {
 	}
 
 	unsafe fn sprite_management(&mut self) {
-		let mut anim = GodotString::new();
+		let mut anim: GodotString;
 		match self.face {
 			Direction::Up => anim = "up".into(),
 			Direction::Down => anim = "down".into(),
