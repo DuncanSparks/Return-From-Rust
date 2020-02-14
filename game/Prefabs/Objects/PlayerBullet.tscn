@@ -123,6 +123,7 @@ wait_time = 1.2
 one_shot = true
 [connection signal="body_entered" from="." to="." method="_on_PlayerBullet_body_entered"]
 [connection signal="body_entered" from="AreaPickUp" to="." method="_on_AreaPickUp_body_entered"]
+[connection signal="body_exited" from="AreaPickUp" to="." method="_on_AreaPickUp_body_exited"]
 [connection signal="timeout" from="TimerPickUp" to="." method="_on_TimerPickUp_timeout"]
 [connection signal="timeout" from="TimerStopHitting" to="." method="_on_TimerStopHitting_timeout"]
 [connection signal="timeout" from="TimerDestroy" to="." method="queue_free"]

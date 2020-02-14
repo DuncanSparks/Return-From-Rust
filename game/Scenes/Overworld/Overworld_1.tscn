@@ -85,8 +85,13 @@ shape = SubResource( 1 )
 autoplay = "Fade"
 anims/Fade = SubResource( 2 )
 [connection signal="ready" from="." to="CanvasLayer/WorldText2" method="set_display" binds= [ true ]]
+[connection signal="room_is_cleared" from="." to="PlayerBullet" method="queue_free"]
+[connection signal="room_is_cleared" from="." to="Barrier" method="queue_free"]
+[connection signal="room_is_cleared" from="." to="CanvasLayer/WorldText" method="set_display" binds= [ true ]]
+[connection signal="room_is_cleared" from="." to="CanvasLayer/Fade" method="queue_free"]
+[connection signal="room_is_cleared" from="." to="AnimationPlayer" method="queue_free"]
 [connection signal="picked_up" from="PlayerBullet" to="Barrier" method="queue_free"]
-[connection signal="picked_up" from="PlayerBullet" to="CanvasLayer/WorldText" method="set_display" binds= [ true ]]
 [connection signal="picked_up" from="PlayerBullet" to="." method="clear_room"]
+[connection signal="picked_up" from="PlayerBullet" to="CanvasLayer/WorldText" method="set_display" binds= [ true ]]
 
 [editable path="LoadingZone"]

@@ -252,25 +252,28 @@ impl Enemy {
 		}
 	}
 
+	#[export]
 	pub unsafe fn heal(&mut self, mut owner: KinematicBody2D, room_start: bool) {
-		get_node!(owner, Particles2D, "PartsDust").unwrap().set_emitting(false);
-		self.healed = true;
-		owner.set_collision_mask_bit(4, false);
-		get_node!(owner, CollisionShape2D, "CollisionShape2D").unwrap().call_deferred("set_disabled".into(), &[true.to_variant()]);
+		if !self.healed {
+			get_node!(owner, Particles2D, "PartsDust").unwrap().set_emitting(false);
+			self.healed = true;
+			owner.set_collision_mask_bit(4, false);
+			get_node!(owner, CollisionShape2D, "CollisionShape2D").unwrap().call_deferred("set_disabled".into(), &[true.to_variant()]);
 
-		if !room_start {
-			get_node!(owner, AudioStreamPlayer, "SoundHeal").unwrap().play(0.0);
-			if !self.disappear {
-				let con = get_singleton!(owner, Node, Controller).into_script();
-				con.map_mut(|contr| { contr.add_enemy_healed(); }).unwrap();
-				con.map_mut(|contr| { contr.add_enemy_healed_info(format!("{}{}{}", owner.get_tree().unwrap().get_current_scene().unwrap().get_filename().to_string(), "--", owner.get_path().to_string()).into(), owner.get_position())}).unwrap();
-			}
-			else {
-				get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("Fade".into(), -1.0, 1.0, false);
-				get_node!(owner, Timer, "TimerDisappear").unwrap().start(0.0);
-			}
+			if !room_start {
+				get_node!(owner, AudioStreamPlayer, "SoundHeal").unwrap().play(0.0);
+				if !self.disappear {
+					let con = get_singleton!(owner, Node, Controller).into_script();
+					con.map_mut(|contr| { contr.add_enemy_healed(); }).unwrap();
+					con.map_mut(|contr| { contr.add_enemy_healed_info(format!("{}{}{}", owner.get_tree().unwrap().get_current_scene().unwrap().get_filename().to_string(), "--", owner.get_path().to_string()).into(), owner.get_position())}).unwrap();
+				}
+				else {
+					get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("Fade".into(), -1.0, 1.0, false);
+					get_node!(owner, Timer, "TimerDisappear").unwrap().start(0.0);
+				}
 
-			owner.emit_signal("healed".into(), &[]);
+				owner.emit_signal("healed".into(), &[]);
+			}
 		}
 	}
 
@@ -298,13 +301,11 @@ impl Enemy {
 	#[export]
 	pub unsafe fn _on_TimerShoot_timeout(&self, owner: KinematicBody2D) {
 		if !self.healed {
-			//get_node!(owner, AudioStreamPlayer, "SoundShoot").unwrap().play(0.0);
 			let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
 			let mut bullet_r = bullet.unwrap().cast::<RigidBody2D>().unwrap();
 			bullet_r.set_position(owner.get_position());
 			
 			let player_ref = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
-			//bullet_r.set_global_rotation(owner.get_global_position().angle_to(player_ref.get_global_position()).get() as f64);
 			let vec = (player_ref.get_global_position() - owner.get_global_position()).normalize();
 			let angle = vec.x.atan2(vec.y) as f64;
 			bullet.unwrap().cast::<RigidBody2D>().unwrap().set_global_rotation(angle);
@@ -318,7 +319,6 @@ impl Enemy {
 
 	#[export]
 	pub unsafe fn _on_TimerNav_timeout(&mut self, owner: KinematicBody2D) {
-		//godot_print!("NAV UPDATE");
 		self.nav_path = self.nav_node.unwrap().get_simple_path(owner.get_global_position(), owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap().get_global_position(), false);
 	}
 

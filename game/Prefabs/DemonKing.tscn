@@ -136,6 +136,10 @@ one_shot = true
 wait_time = 0.1
 one_shot = true
 
+[node name="TimerCollision" type="Timer" parent="."]
+wait_time = 0.03
+one_shot = true
+
 [node name="SoundKick" type="AudioStreamPlayer" parent="."]
 stream = ExtResource( 8 )
 
@@ -161,3 +165,4 @@ anims/Idle = SubResource( 5 )
 [connection signal="timeout" from="TimerTeleport2" to="." method="tele_in"]
 [connection signal="timeout" from="TimerAttack" to="." method="attack"]
 [connection signal="timeout" from="TimerBullet" to="." method="fire_bullet"]
+[connection signal="timeout" from="TimerCollision" to="CollisionShape2D" method="set_disabled" binds= [ false ]]

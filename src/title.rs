@@ -115,14 +115,17 @@ impl Title {
 		player_ref.map_mut(|player| { player.set_lock_movement(false); }).unwrap();
 		get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.show_ui(owner, true); }).unwrap();
 		let mut player_ref_2 = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
-		player_ref_2.set_position(Vector2::new(160.0, 120.0));
+		player_ref_2.set_position(Vector2::new(160.0, 130.0));
 		player_ref.map_mut(|player| { player.set_face(player::Direction::Down); }).unwrap();
+		player_ref.map_mut(|player| { player.set_bullet_available(false); }).unwrap();
 		player_ref_2.show();
 		player_ref.map_mut(|player| { player.heal(10); }).unwrap();
+		player_ref.map_mut(|player| { player.set_invincible(false); }).unwrap();
 
 		let contr_ref = get_singleton!(owner, Node, Controller).into_script();
 		get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.play_music(owner); }).unwrap();
 		contr_ref.map_mut(|contr| { contr.reset(); }).unwrap();
 		contr_ref.map_mut(|contr| { contr.set_in_game(true); }).unwrap();
+		contr_ref.map_mut(|contr| { contr.start_timer(); }).unwrap();
 	}
 }

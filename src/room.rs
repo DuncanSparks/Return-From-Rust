@@ -70,7 +70,9 @@ impl Room {
 		self.enemies_healed += 1;
 		if self.enemies_healed >= self.enemy_count {
 			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.add_room_cleared(owner.get_filename()); }).unwrap();
-			owner.emit_signal("room_is_cleared".into(), &[]);
+			if owner.get_filename() != "res://Scenes/Overworld/Overworld_1.tscn".into() {
+				owner.emit_signal("room_is_cleared".into(), &[]);
+			}
 		}
 	}
 }

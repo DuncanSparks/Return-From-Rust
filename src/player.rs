@@ -69,7 +69,7 @@ impl Player {
 
 			health: 5,
 			iframes: false,
-			invincible: true,
+			invincible: false,
 
 			loading: false,
 			lock_movement: false,
@@ -137,16 +137,18 @@ impl Player {
 	}
 
 	pub unsafe fn damage(&mut self, mut owner: KinematicBody2D, amount: u16) {
-		get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
-		self.health -= amount;
-		self.iframes = true;
-		get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1.0, 1.0, false);
-		if self.health <= 0 {
-			owner.hide();
-			self.lock_movement = true;
-			get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.show_ui(owner, false); }).unwrap();
-			get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.stop_music(owner); }).unwrap();
-			owner.get_tree().unwrap().change_scene("res://Scenes/GameOver.tscn".into()).unwrap();
+		if !self.invincible {
+			get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
+			self.health -= amount;
+			self.iframes = true;
+			get_node!(owner, AnimationPlayer, "AnimationPlayer").unwrap().play("IFrames".into(), -1.0, 1.0, false);
+			if self.health <= 0 {
+				owner.hide();
+				self.lock_movement = true;
+				get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.show_ui(owner, false); }).unwrap();
+				get_singleton!(owner, Node, Controller).map_mut(|contr, owner| { contr.stop_music(owner); }).unwrap();
+				owner.get_tree().unwrap().change_scene("res://Scenes/GameOver.tscn".into()).unwrap();
+			}
 		}
 	}
 
@@ -246,7 +248,7 @@ impl Player {
 
 	unsafe fn throw_bullet(&mut self, owner: KinematicBody2D) {
 		let bullet = self.bullet_ref.as_ref().unwrap().instance(0);
-		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_position(owner.get_position() + Vector2::new(0.0, 8.0));
+		bullet.unwrap().cast::<RigidBody2D>().unwrap().set_position(owner.get_position() + Vector2::new(0.0, 5.0));
 
 		let vec = (owner.get_global_mouse_position() - owner.get_position()).normalize();
 		let angle = vec.x.atan2(vec.y) as f64;

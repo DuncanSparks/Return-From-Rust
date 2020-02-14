@@ -24,6 +24,7 @@ pub struct Controller {
 
 	in_game: bool,
 	speedrun_timer: bool,
+	tick_timer: bool,
 	timer: f64,
 
 	sound_oneshot_ref: Option<PackedScene>,
@@ -37,6 +38,8 @@ pub struct Controller {
 	ui_alpha_target_1: f32,
 	ui_2: Option<Control>,
 	ui_alpha_target_2: f32,
+	in_area_1: u16,
+	in_area_2: u16,
 
 	rand: RandomNumberGenerator
 }
@@ -53,6 +56,7 @@ impl Controller {
 
 			in_game: false,
 			speedrun_timer: false,
+			tick_timer: false,
 			timer: 0.0,
 
 			sound_oneshot_ref: None,
@@ -66,6 +70,8 @@ impl Controller {
 			ui_alpha_target_1: 1.0,
 			ui_2: None,
 			ui_alpha_target_2: 1.0,
+			in_area_1: 0,
+			in_area_2: 0,
 
 			rand: RandomNumberGenerator::new()
 		}
@@ -99,13 +105,13 @@ impl Controller {
 
 	#[export]
 	pub unsafe fn _process(&mut self, owner: Node, delta: f64) {
-		if self.speedrun_timer {
+		if self.speedrun_timer && self.tick_timer {
 			self.timer += delta;
 		}
 
-		self.timer_text.unwrap().set_text(GodotString::from(format!("{:02}:{:.03}", self.timer.floor() as i64 / 60, self.timer % 60.0)));
+		self.timer_text.unwrap().set_text(GodotString::from(format!("{:02}:{:0>6.3}", self.timer.floor() as i64 / 60, self.timer % 60.0)));
 
-		self.text_healed.unwrap().set_text(format!("Healed: {}", self.num_enemies_healed).into());
+		self.text_healed.unwrap().set_text(format!("Healed: {}/5", self.fountains_purified.len()).into());
 
 		self.ui_1.unwrap().set_modulate(Color{r: 1.0, g: 1.0, b: 1.0, a: self.ui_alpha_target_1});
 		self.ui_2.unwrap().set_modulate(Color{r: 1.0, g: 1.0, b: 1.0, a: self.ui_alpha_target_2});
@@ -172,28 +178,36 @@ impl Controller {
 	#[export]
 	pub unsafe fn _on_AreaUI_body_entered(&mut self, _owner: Node, body: Node) {
 		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
-			self.ui_alpha_target_1 = 0.2;
+			self.in_area_1 += 1;
+			self.ui_alpha_target_1 = 0.4;
 		}
 	}
 
 	#[export]
 	pub unsafe fn _on_AreaUI_body_exited(&mut self, _owner: Node, body: Node) {
 		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
-			self.ui_alpha_target_1 = 1.0;
+			self.in_area_1 -= 1;
+			if self.in_area_1 <= 0 {
+				self.ui_alpha_target_1 = 1.0;
+			}
 		}
 	}
 
 	#[export]
 	pub unsafe fn _on_AreaUI2_body_entered(&mut self, _owner: Node, body: Node) {
 		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
-			self.ui_alpha_target_2 = 0.2;
+			self.in_area_2 += 1;
+			self.ui_alpha_target_2 = 0.4;
 		}
 	}
 
 	#[export]
 	pub unsafe fn _on_AreaUI2_body_exited(&mut self, _owner: Node, body: Node) {
 		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
-			self.ui_alpha_target_2 = 1.0;
+			self.in_area_2 -= 1;
+			if self.in_area_2 <= 0 {
+				self.ui_alpha_target_2 = 1.0;
+			}
 		}
 	}
 }
@@ -218,6 +232,7 @@ impl Controller {
 		self.enemies_healed.clear();
 		self.fountains_purified.clear();
 		self.num_enemies_healed = 0;
+		self.tick_timer = false;
 		self.timer = 0.0;
 	}
 
@@ -233,8 +248,12 @@ impl Controller {
 		self.fountains_purified.insert(fountain_id, true);
 	}
 
+	pub fn start_timer(&mut self) {
+		self.tick_timer = true;
+	}
+
 	pub fn stop_timer(&mut self) {
-		self.speedrun_timer = false;
+		self.tick_timer = false;
 	}
 
 	pub fn rand_range(&mut self, from: f64, to: f64) -> f64 {
@@ -263,5 +282,9 @@ impl Controller {
 
 	pub fn is_room_cleared(&self, room: GodotString) -> bool {
 		self.rooms_cleared.contains(&room)
+	}
+
+	pub fn get_time_string(&self) -> GodotString {
+		GodotString::from(format!("{:02}:{:0>6.3}", self.timer.floor() as i64 / 60, self.timer % 60.0))
 	}
 }

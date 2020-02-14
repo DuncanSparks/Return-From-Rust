@@ -51,7 +51,9 @@ impl GroundAttack {
 		get_node!(owner, AudioStreamPlayer, "SoundFire").unwrap().play(0.0);
 		if self.in_area {
 			let player_ref = get_singleton!(owner, KinematicBody2D, Player);
-			player_ref.map_mut(|player, owner| { player.damage(owner, 2); }).unwrap();
+			if get_singleton!(owner, KinematicBody2D, Player).into_script().map(|player| { !player.is_in_iframes() }).unwrap() {
+				player_ref.map_mut(|player, owner| { player.damage(owner, 2); }).unwrap();
+			}
 		}
 	}
 }

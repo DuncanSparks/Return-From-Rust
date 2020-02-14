@@ -328,6 +328,7 @@ custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 disabled = true
+action_mode = 0
 text = "Credits"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -348,6 +349,7 @@ custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 disabled = true
+action_mode = 0
 text = "Exit"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -368,6 +370,7 @@ custom_colors/font_color_disabled = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color = Color( 0.494118, 0.494118, 0.494118, 1 )
 custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
 disabled = true
+action_mode = 0
 text = "Speedrun Timer - Off"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -441,6 +444,7 @@ Production, Music,
 Design, Programming, Art"
 align = 1
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
@@ -456,6 +460,7 @@ Assistance with
 Rust port"
 align = 1
 __meta__ = {
+"_edit_lock_": true,
 "_edit_use_anchors_": false
 }
 
