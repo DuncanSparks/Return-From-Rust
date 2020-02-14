@@ -58,6 +58,7 @@ impl PlayerBullet {
 			let ang = Angle::radians(owner.get_global_rotation() as f32);
 			let ang_deg = ang.positive().to_degrees() - 90.0;
 			owner.set_linear_velocity(Vector2::new(PlayerBullet::SPEED, 0.0).rotated(-Angle::radians(ang_deg.to_radians())));
+			get_node!(owner, Timer, "TimerStopHitting").unwrap().start(0.0);
 		}
 		else {
 			owner.set_angular_velocity(0.0);
