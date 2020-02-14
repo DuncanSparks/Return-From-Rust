@@ -16,7 +16,7 @@ angular_velocity = 50.0
 angular_velocity_random = 0.5
 orbit_velocity = 0.0
 orbit_velocity_random = 0.0
-scale = 4.0
+scale = 6.0
 color_ramp = SubResource( 2 )
 
 [node name="PartsTeleport" type="Particles2D"]

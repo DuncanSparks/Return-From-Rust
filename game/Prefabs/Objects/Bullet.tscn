@@ -28,7 +28,7 @@ tracks/0/keys = {
 "Bullet",
 ]]
 collision_layer = 12
-collision_mask = 12
+collision_mask = 8
 mass = 0.00102041
 gravity_scale = 0.0
 contacts_reported = 1

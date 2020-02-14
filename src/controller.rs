@@ -129,12 +129,6 @@ impl Controller {
 				owner.get_tree().unwrap().get_root().unwrap().add_child(pm, false);
 				owner.get_tree().unwrap().set_pause(true);
 		}
-
-		if inp.is_action_just_pressed("debug".into()) {
-			for i in 0..5 {
-				self.add_fountain_purified_info(format!("{}", i).into());
-			}
-		}
 	}
 
 	// =====================================================================
