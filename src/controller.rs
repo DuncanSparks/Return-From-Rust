@@ -177,7 +177,7 @@ impl Controller {
 
 	#[export]
 	pub unsafe fn _on_AreaUI_body_entered(&mut self, _owner: Node, body: Node) {
-		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) || body.is_in_group("BossBullet".into()) {
 			self.in_area_1 += 1;
 			self.ui_alpha_target_1 = 0.4;
 		}
@@ -185,7 +185,7 @@ impl Controller {
 
 	#[export]
 	pub unsafe fn _on_AreaUI_body_exited(&mut self, _owner: Node, body: Node) {
-		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) || body.is_in_group("BossBullet".into()) {
 			self.in_area_1 -= 1;
 			if self.in_area_1 <= 0 {
 				self.ui_alpha_target_1 = 1.0;
@@ -195,7 +195,7 @@ impl Controller {
 
 	#[export]
 	pub unsafe fn _on_AreaUI2_body_entered(&mut self, _owner: Node, body: Node) {
-		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) || body.is_in_group("BossBullet".into()) {
 			self.in_area_2 += 1;
 			self.ui_alpha_target_2 = 0.4;
 		}
@@ -203,7 +203,7 @@ impl Controller {
 
 	#[export]
 	pub unsafe fn _on_AreaUI2_body_exited(&mut self, _owner: Node, body: Node) {
-		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) {
+		if body.is_in_group("Player".into()) || body.is_in_group("Enemy".into()) || body.is_in_group("EnemyBoss".into()) || body.is_in_group("PlayerBullet".into()) || body.is_in_group("BossBullet".into()) {
 			self.in_area_2 -= 1;
 			if self.in_area_2 <= 0 {
 				self.ui_alpha_target_2 = 1.0;

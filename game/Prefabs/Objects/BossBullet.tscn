@@ -120,9 +120,10 @@ tracks/1/keys = {
 }
 
 [node name="BossBullet" type="RigidBody2D" groups=[
+"BossBullet",
 "Bullet",
 ]]
-collision_layer = 352
+collision_layer = 864
 collision_mask = 352
 mass = 0.00102041
 physics_material_override = SubResource( 1 )

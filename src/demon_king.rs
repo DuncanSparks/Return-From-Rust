@@ -139,6 +139,7 @@ impl DemonKing {
 			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.stop_timer(); }).unwrap();
 			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|pl| { pl.set_invincible(true); }).unwrap();
 			get_singleton!(owner, KinematicBody2D, Player).into_script().map_mut(|pl| { pl.set_lock_movement(true); }).unwrap();
+			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.set_in_game(false); }).unwrap();
 			get_node!(owner, AnimatedSprite, "Sprite").unwrap().play("healed".into(), false);
 
 			owner.get_tree().unwrap().get_current_scene().unwrap().get_node("MusicBoss".into()).unwrap().cast::<AudioStreamPlayer>().unwrap().stop();
@@ -296,7 +297,7 @@ impl DemonKing {
 	#[export]
 	pub unsafe fn _on_AnimationPlayer_animation_finished(&mut self, owner: KinematicBody2D, anim_name: GodotString) {
 		if anim_name == "End".into() {
-			get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.set_in_game(false); }).unwrap();
+			//get_singleton!(owner, Node, Controller).into_script().map_mut(|contr| { contr.set_in_game(false); }).unwrap();
 
 			//let player_ref = get_singleton!(owner, KinematicBody2D, Player).into_script();
 			let mut player_ref_2 = owner.get_node(NodePath::from(format!("{}{}", "/root/", "Player")).new_ref()).unwrap().cast::<KinematicBody2D>().unwrap();
