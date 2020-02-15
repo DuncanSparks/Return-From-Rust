@@ -45,9 +45,9 @@ layer = 8
 
 [node name="NinePatchRect" type="NinePatchRect" parent="CanvasLayer"]
 margin_left = 136.0
-margin_top = 72.0
+margin_top = 56.0
 margin_right = 184.0
-margin_bottom = 128.0
+margin_bottom = 112.0
 texture = ExtResource( 1 )
 patch_margin_left = 2
 patch_margin_top = 2

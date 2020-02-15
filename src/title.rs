@@ -119,7 +119,7 @@ impl Title {
 		player_ref.map_mut(|player| { player.set_face(player::Direction::Down); }).unwrap();
 		player_ref.map_mut(|player| { player.set_bullet_available(false); }).unwrap();
 		player_ref_2.show();
-		player_ref.map_mut(|player| { player.heal(10); }).unwrap();
+		player_ref.map_mut(|player| { player.set_health(5); }).unwrap();
 		player_ref.map_mut(|player| { player.set_invincible(false); }).unwrap();
 
 		let contr_ref = get_singleton!(owner, Node, Controller).into_script();

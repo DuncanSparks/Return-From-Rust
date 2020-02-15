@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Return From Rust"
+config/name="Return From Dust"
 run/main_scene="res://Scenes/Start.tscn"
 boot_splash/image="res://Splash.png"
 boot_splash/use_filter=false

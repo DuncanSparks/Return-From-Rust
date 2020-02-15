@@ -40,7 +40,7 @@ pub struct Player {
 	face: Direction,
 	walking: bool,
 
-	health: u16,
+	health: i16,
 	iframes: bool,
 	invincible: bool,
 
@@ -136,7 +136,7 @@ impl Player {
 		move_and_slide_default!(owner, self.velocity * Player::SPEED);
 	}
 
-	pub unsafe fn damage(&mut self, mut owner: KinematicBody2D, amount: u16) {
+	pub unsafe fn damage(&mut self, mut owner: KinematicBody2D, amount: i16) {
 		if !self.invincible {
 			get_node!(owner, AudioStreamPlayer, "SoundHurt").unwrap().play(0.0);
 			self.health -= amount;
@@ -183,7 +183,7 @@ impl Player {
 		self.bullet_available = value;
 	}
 
-	pub fn heal(&mut self, amount: u16) {
+	pub fn heal(&mut self, amount: i16) {
 		self.health = cmp::min(self.health + amount, 5);
 	}
 
@@ -195,8 +195,12 @@ impl Player {
 		self.loading = value;
 	}
 
-	pub fn get_health(&self) -> u16 {
+	pub fn get_health(&self) -> i16 {
 		self.health
+	}
+
+	pub fn set_health(&mut self, value: i16) {
+		self.health = value;
 	}
 
 	pub fn set_lock_movement(&mut self, value: bool) {
