@@ -1,0 +1,3 @@
+[target.x86_64-apple-darwin]
+linker = "/opt/osxcross/bin/x86_64-apple-darwin17-clang"
+ar = "/opt/osxcross/bin/x86_64-apple-darwin17-ar"
